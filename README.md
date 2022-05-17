@@ -31,9 +31,15 @@ cd ../ofxURDriver
 git checkout dev-ur10
 ```
 
-5. Build the `example-simple` project using the [Project Generator](https://openframeworks.cc/learning/01_basics/create_a_new_project/).
+5. Download this repo into your openFrameworks `/apps` directory:
+```
+cd ../../apps
+git clone https://github.com/madelinegannon/personable_robotics.git
+```
 
-6. Run the project — move the Gizmo to move the Robot:
+6. Build the `example-simple` project using the [Project Generator](https://openframeworks.cc/learning/01_basics/create_a_new_project/).
+
+7. Run the project — move the Gizmo to move the Robot:
 - Press `W` to use the Translate Gizmo
 - Press `E` to use the Rotate Gizmo
 - When you're ready, move the simulated robot into a position near the actual robot. Then press the `Robot Live` Button to move the actual robot.
