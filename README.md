@@ -31,7 +31,7 @@ cd ../ofxURDriver
 git checkout dev-ur10
 ```
 
-5. Build the `example-simple` project using the [Project Generator](https://openframeworks.cc/learning/01_basics/create_a_new_project/):
+5. Build the `example-simple` project using the [Project Generator](https://openframeworks.cc/learning/01_basics/create_a_new_project/).
 
 6. Run the project — move the Gizmo to move the Robot:
 - Press `W` to use the Translate Gizmo
