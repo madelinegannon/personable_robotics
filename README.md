@@ -40,7 +40,7 @@ git checkout dev-ur10
 - Press `E` to use the Rotate Gizmo
 - When you're ready, move the simulated robot into a position near the actual robot. Then press the `Robot Live` Button to move the actual robot.
 
-## Troubleshooting Installation
+### Troubleshooting Installation
 
 # Examples
 
@@ -50,4 +50,16 @@ git checkout dev-ur10
 (gif)
 
 ## example-osc
-`example-osc` lets you control the `tcp_target` and `look_at_target` of the robot over [OSC](https://ccrma.stanford.edu/groups/osc/index.html) — a common, lightweight real-time communication protocol found in many, many applications. OSC is like digital duct tape that can connect many different apps together. For example [Unity](https://thomasfredericks.github.io/UnityOSC/), [Grasshopper](https://www.food4rhino.com/en/app/ghowl), [MaxMSP](https://opensoundcontrol.stanford.edu/implementations/OpenSoundControl-for-MaxMSP.html), [Touchdesigner](https://docs.derivative.ca/OSC_In_CHOP), and [TouchOSC](https://hexler.net/touchosc) all have OSC plugins that can pipe information between game development, 3D modeling, audio visual, and touch screen tools.
+`example-osc` lets you control the `tcp_target` and `look_at_target` of the robot over [OSC](https://ccrma.stanford.edu/groups/osc/index.html) — a common, lightweight, real-time communication protocol found in _many, many_ applications. OSC is like digital duct tape for connecting separate apps together. For example [Unity](https://thomasfredericks.github.io/UnityOSC/), [Grasshopper](https://www.food4rhino.com/en/app/ghowl), [MaxMSP](https://opensoundcontrol.stanford.edu/implementations/OpenSoundControl-for-MaxMSP.html), [Touchdesigner](https://docs.derivative.ca/OSC_In_CHOP), and [TouchOSC](https://hexler.net/touchosc) all have OSC plugins that can pipe information between game development, 3D modeling, audio visual, and touch screen tools.
+
+(gif)
+
+## example-lookat
+`example-lookat` adds real-time sensing into the previous example. It uses body tracking from the [Azure Kinect](https://azure.microsoft.com/en-us/services/kinect-dk/) to get the robot to look at and track you as you move around an interaction zone. 
+
+(gif)
+
+## example-touch
+`example-touch` uses a depth camera as a touch sensor for interacting with the robot. This is the most advanced example, and it requires the most careful calibration between sensor, robot, and environment.
+
+(gif)
