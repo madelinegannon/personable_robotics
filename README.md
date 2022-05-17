@@ -31,13 +31,23 @@ cd ../ofxURDriver
 git checkout dev-ur10
 ```
 
-6. Build the `example-simple` project using the [Project Generator](https://openframeworks.cc/learning/01_basics/create_a_new_project/):
+5. Build the `example-simple` project using the [Project Generator](https://openframeworks.cc/learning/01_basics/create_a_new_project/):
 
 (gif)
 
-5. Run the project — move the Gizmo to move the Robot:
+6. Run the project — move the Gizmo to move the Robot:
 - Press `W` to use the Translate Gizmo
 - Press `E` to use the Rotate Gizmo
-- When you're ready, press the `Robot Live` Button to move the actual robot.
+- When you're ready, move the simulated robot into a position near the actual robot. Then press the `Robot Live` Button to move the actual robot.
 
 ## Troubleshooting Installation
+
+# Examples
+
+## example-simple
+`example-simple` is a barebones app that's a useful template to build from. This minimal app is also helpful for debugging — for example, checking networking to the robot or testing joint limits and configurations.
+
+(gif)
+
+## example-osc
+`example-osc` lets you control the `tcp_target` and `look_at_target` of the robot over [OSC](https://ccrma.stanford.edu/groups/osc/index.html) — a common, lightweight real-time communication protocol found in many, many applications. OSC is like digital duct tape that can connect many different apps together. For example [Unity](https://thomasfredericks.github.io/UnityOSC/), [Grasshopper](https://www.food4rhino.com/en/app/ghowl), [MaxMSP](https://opensoundcontrol.stanford.edu/implementations/OpenSoundControl-for-MaxMSP.html), [Touchdesigner](https://docs.derivative.ca/OSC_In_CHOP), and [TouchOSC](https://hexler.net/touchosc) all have OSC plugins that can pipe information between game development, 3D modeling, audio visual, and touch screen tools.
