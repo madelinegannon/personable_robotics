@@ -10,8 +10,9 @@
 2. Calibrate the sensor by manually moving the `sensor_gizmo` into the correct position and orientation.
 3. Click `Use OSC` in the GUI to enable listening for OSC messages (or press 'o' to toggle on/off)
 4. Click `Use Agent` to interpolate between the incoming values (or press 'a' to toggle on/off)
-5. Build and Run `azure_kinect_skeleton_streaming`. Ensure that the IP Address and Port are correct before running.
-5. Click `Robot_LIVE` in `example-lookat` when ready to move the real robot (or press 'm' to toggle on/off)
+5. Build and Run `azure_kinect_skeleton_streaming`
+> Ensure that the IP Address and Port are correct before running.
+6. Click `Robot_LIVE` in `example-lookat` when ready to move the real robot (or press 'm' to toggle on/off)
 
 ## Sensor Calibration
 
