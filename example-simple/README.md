@@ -29,5 +29,6 @@ If you are having issues communicating with the physical robot, there are a few 
 3. Press `1`, `2`, `3`, or `4` to chage the viewport to preset `TOP`, `FRONT`, `SIDE`, or `PERSPECTIVE` views.
 4. Press `m` to go into `LIVE` mode and move the real robot.
 > WARNING: Make sure the area is clear of people and objects before going into `LIVE` mode.
+
 > CAUTION: Large, sudden movements will throw velocity errors or joint errors that cause emergency stops.
 
