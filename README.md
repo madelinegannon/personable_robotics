@@ -52,12 +52,12 @@ git clone https://github.com/madelinegannon/personable_robotics.git
 ## example-simple
 `example-simple` is a barebones app that's a useful template to build from. This minimal app is also helpful for debugging — for example, checking networking to the robot or testing joint limits and configurations.
 
-![](https://github.com/madelinegannon/personable_robotics/blob/main/example-simple/example-simple.gif)
+![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/example-simple.gif)
 
 ## example-osc
 `example-osc` lets you control the `tcp_target` and `look_at_target` of the robot over [OSC](https://ccrma.stanford.edu/groups/osc/index.html) — a common, lightweight, real-time communication protocol found in _many, many_ applications. OSC is like digital duct tape for connecting separate apps together. For example [Unity](https://thomasfredericks.github.io/UnityOSC/), [Grasshopper](https://www.food4rhino.com/en/app/ghowl), [MaxMSP](https://opensoundcontrol.stanford.edu/implementations/OpenSoundControl-for-MaxMSP.html), [Touchdesigner](https://docs.derivative.ca/OSC_In_CHOP), and [TouchOSC](https://hexler.net/touchosc) all have OSC plugins that can pipe information between game development, 3D modeling, audio visual, and touch screen tools.
 
-![](https://github.com/madelinegannon/personable_robotics/blob/main/example-osc/example-osc.gif)
+![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/example-osc.gif)
 
 ## example-lookat
 `example-lookat` adds real-time sensing into the previous example. It uses body tracking from the [Azure Kinect](https://azure.microsoft.com/en-us/services/kinect-dk/) to get the robot to look at and track you as you move around an interaction zone. 
