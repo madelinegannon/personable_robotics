@@ -7,13 +7,17 @@ void ofApp::setup(){
     setup_scene();
     
     // setup robot
-    robot.setup("192.168.1.10", robot_type);    // change IP string to your robot's IP address
+    string ip_address = "192.168.1.10"; // change this to your robot's IP address
+    bool offline = true; // change this to false when connected to the robot
+    robot.setup(ip_address, robot_type, offline);
 
     // setup gui
     setup_gui();
     
     // start robot
     robot.start();
+    
+    show_perspective.set(true);
 }
 
 //--------------------------------------------------------------
