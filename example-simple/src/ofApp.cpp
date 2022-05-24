@@ -91,11 +91,11 @@ bool ofApp::disable_camera(){
 void ofApp::setup_gui(){
     
     params.setName("Navigation");
-    params.add(show_gui.set("Show_GUI", true));
-    params.add(show_top.set("TOP", true));
-    params.add(show_front.set("FRONT", false));
-    params.add(show_side.set("SIDE", false));
-    params.add(show_perspective.set("PERSP", false));
+    params.add(show_gui.set("Show_GUI\t('h')", true));
+    params.add(show_top.set("TOP\t\t('1')", true));
+    params.add(show_front.set("FRONT\t\t('2')", false));
+    params.add(show_side.set("SIDE\t\t('3')", false));
+    params.add(show_perspective.set("PERSP\t\t('4')", false));
     
     show_top.addListener(this, &ofApp::listener_show_top);
     show_front.addListener(this, &ofApp::listener_show_front);
@@ -106,7 +106,7 @@ void ofApp::setup_gui(){
     panel.setPosition(10, 10);
     
     panel_robot.setup("Robot_Controller");
-    panel_robot.add(robot_live.set("Robot_LIVE", false));
+    panel_robot.add(robot_live.set("Robot_LIVE\t('m')", false));
     panel_robot.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
     
     ofSetCircleResolution(60);

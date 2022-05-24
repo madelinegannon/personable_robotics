@@ -41,6 +41,7 @@ class ofApp : public ofBaseApp{
         ofxGizmo look_at_target;
         AgentController agents;
         void keypressed_gizmo(int key);
+        void setup_gizmos();
         
         // Scene
         void setup_scene();

@@ -9,6 +9,7 @@
 1. Build and Run `example-osc`
 2. Click `Use OSC` in the GUI to enable listening for OSC messages (or press 'o' to toggle on/off)
 3. Click `Use Agent` to interpolate between the incoming values (or press 'a' to toggle on/off)
+4. Click `Robot_LIVE` when ready to move the real robot (or press 'm' to toggle on/off)
 
 ## Agent Motion
 

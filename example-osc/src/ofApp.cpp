@@ -8,7 +8,8 @@ void ofApp::setup(){
     
     // setup robot
     string ip_address = "192.168.1.10"; // change this to your robot's IP address
-    robot.setup(ip_address, robot_type);
+    bool offline = true; // change this to false when connected to the robot
+    robot.setup(ip_address, robot_type, offline);
     
     // setup osc communications
     receiver.setup(receive_port);
@@ -116,7 +117,44 @@ void ofApp::check_for_msg(){
             float z = m.getArgAsFloat(2);
             ofNode temp;
             temp.setGlobalPosition(x, y, z);
+            temp.setGlobalOrientation(look_at_target.getRotation());
+            look_at_target.setNode(temp);
+        }
+        else if(m.getAddress() == "/multixy/1"){ // from TouchOSC example
+            float x = m.getArgAsFloat(0);
+            float y = tcp_target.getTranslation().y;
+            float z = m.getArgAsFloat(1);
+            
+            float min_x = 400;
+            float max_x = 1000;
+            float min_z = -800;
+            float max_z = 800;
+            
+            x = ofMap(x, 0, 1, min_x, max_x, true);
+            z = ofMap(z, 1, 0, min_z, max_z, true);
+            
+            ofNode temp;
+            temp.setGlobalPosition(x, y, z);
             temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+        else if(m.getAddress() == "/multixy/2"){
+            float x = m.getArgAsFloat(0);
+            float y = look_at_target.getTranslation().y;
+            float z = m.getArgAsFloat(1);
+            
+            float offset = 500;
+            float min_x = 400;
+            float max_x = 1000;
+            float min_z = -800;
+            float max_z = 800;
+            
+            x = ofMap(x, 0, 1, min_x+offset, max_x+offset, true);
+            z = ofMap(z, 1, 0, min_z+offset, max_z+offset, true);
+            
+            ofNode temp;
+            temp.setGlobalPosition(x, y, z);
+            temp.setGlobalOrientation(look_at_target.getRotation());
             look_at_target.setNode(temp);
         }
         // unrecognized message
@@ -219,11 +257,11 @@ bool ofApp::disable_camera(){
 void ofApp::setup_gui(){
     
     params.setName("Navigation");
-    params.add(show_gui.set("Show_GUI", true));
-    params.add(show_top.set("TOP", true));
-    params.add(show_front.set("FRONT", false));
-    params.add(show_side.set("SIDE", false));
-    params.add(show_perspective.set("PERSP", false));
+    params.add(show_gui.set("Show_GUI\t('h')", true));
+    params.add(show_top.set("TOP\t\t('1')", true));
+    params.add(show_front.set("FRONT\t\t('2')", false));
+    params.add(show_side.set("SIDE\t\t('3')", false));
+    params.add(show_perspective.set("PERSP\t\t('4')", false));
     
     show_top.addListener(this, &ofApp::listener_show_top);
     show_front.addListener(this, &ofApp::listener_show_front);
@@ -234,16 +272,16 @@ void ofApp::setup_gui(){
     panel.setPosition(10, 10);
     
     panel_motion.setup("Motion_Parameters");
-    panel_motion.add(use_look_at.set("Use_Look_At", true));
-    panel_motion.add(use_agent.set("Use_Agent", false));
+    panel_motion.add(use_look_at.set("Use_Look_At\t('l')", true));
+    panel_motion.add(use_agent.set("Use_Agent\t('a')", false));
     panel_motion.add(agents.params);
     panel_motion.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
     
     use_look_at.addListener(this, &ofApp::on_use_look_at);
     
     panel_robot.setup("Robot_Controller");
-    panel_robot.add(use_osc.set("Use_OSC", false));
-    panel_robot.add(robot_live.set("Robot_LIVE", false));
+    panel_robot.add(use_osc.set("Use_OSC \t('o')", false));
+    panel_robot.add(robot_live.set("Robot_LIVE\t('m')", false));
     panel_robot.setPosition(panel_motion.getPosition().x, panel_motion.getPosition().y + panel_motion.getHeight() + 5);
     
     ofSetCircleResolution(60);
@@ -392,6 +430,10 @@ void ofApp::keyPressed(int key){
     switch (key) {
         case 'f':
             ofToggleFullscreen();
+            break;
+        case 'o':
+        case 'O':
+            use_osc = !use_osc;
             break;
         case 'a':
         case 'A':

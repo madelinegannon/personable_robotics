@@ -8,7 +8,8 @@ void ofApp::setup(){
     
     // setup robot
     string ip_address = "192.168.1.10"; // change this to your robot's IP address
-    robot.setup(ip_address, robot_type);
+    bool offline = true; // change this to false when connected to the robot
+    robot.setup(ip_address, robot_type, offline);
     
     // setup osc communications
     receiver.setup(receive_port);
@@ -130,6 +131,43 @@ void ofApp::check_for_msg(){
             temp.setGlobalOrientation(tcp_target.getRotation());
             look_at_target.setNode(temp);
         }
+        else if(m.getAddress() == "/multixy/1"){ // from TouchOSC example
+            float x = m.getArgAsFloat(0);
+            float y = tcp_target.getTranslation().y;
+            float z = m.getArgAsFloat(1);
+            
+            float min_x = 400;
+            float max_x = 1000;
+            float min_z = -800;
+            float max_z = 800;
+            
+            x = ofMap(x, 0, 1, min_x, max_x, true);
+            z = ofMap(z, 1, 0, min_z, max_z, true);
+            
+            ofNode temp;
+            temp.setGlobalPosition(x, y, z);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+        else if(m.getAddress() == "/multixy/2"){
+            float x = m.getArgAsFloat(0);
+            float y = look_at_target.getTranslation().y;
+            float z = m.getArgAsFloat(1);
+            
+            float offset = 500;
+            float min_x = 400;
+            float max_x = 1000;
+            float min_z = -800;
+            float max_z = 800;
+            
+            x = ofMap(x, 0, 1, min_x+offset, max_x+offset, true);
+            z = ofMap(z, 1, 0, min_z+offset, max_z+offset, true);
+            
+            ofNode temp;
+            temp.setGlobalPosition(x, y, z);
+            temp.setGlobalOrientation(look_at_target.getRotation());
+            look_at_target.setNode(temp);
+        }
         else if (m.getAddress() == "/joint"){
             int index = m.getArgAsInt(0);
             float x = m.getArgAsFloat(1);
@@ -157,6 +195,18 @@ void ofApp::check_for_msg(){
                 joints[index].setPosition(x, y, z); // <-- don't use Global Position
                 joints[index].setGlobalOrientation(glm::quat(qw, qx, qy, qz));
             }
+        }
+        // Motion Behavior Parameters can be updated over OSC
+        else if(m.getAddress() == "/motion_lerp"){
+            float t = m.getArgAsFloat(0);   // value should be in range {0,1}
+            motion_lerp.set(t);
+        }
+        else if(m.getAddress() == "/motion_base_offset"){
+            float t = m.getArgAsFloat(0);   // value should be in range {0,1}
+            t = ofMap(t, 0, 1, motion_base_offset.getMin(), motion_base_offset.getMax());
+            motion_base_offset.set(t);
+        }
+        else if(m.getAddress() == "/robot_motion_base_offset"){
         }
         // unrecognized message
         else{
@@ -194,12 +244,7 @@ void ofApp::check_for_msg(){
 //--------------------------------------------------------------
 void ofApp::setup_scene(){
     
-    // setup tcp & look_at gizmos
-    ofNode temp;
-    temp.setGlobalPosition(500, 0, 350);
-    tcp_target.setNode(temp);
-    temp.setGlobalPosition(tcp_target.getTranslation().x + 1000, tcp_target.getTranslation().y, tcp_target.getTranslation().z - 5);
-    look_at_target.setNode(temp);
+    setup_gizmos();
     
     // setup agent used for smoothing tcp motion
     agents.setup(1);
@@ -231,8 +276,12 @@ void ofApp::draw_scene(){
     }
     // Draw the Sensor Gizmo
     if (show_sensor_gizmo){
+        ofPushMatrix();
+        ofTranslate(sensor_gizmo.getTranslation());
+        ofDrawBitmapString("Sensor", 10, 10);
+        ofPopMatrix();
         sensor_gizmo.draw(cam);
-        sensor.draw();
+        sensor.draw(); // parent node of the sensor
     }
     
     // Draw Skeleton
@@ -249,6 +298,25 @@ void ofApp::draw_scene(){
     ofPopStyle();
     
     cam.end();
+}
+
+//--------------------------------------------------------------
+void ofApp::setup_gizmos(){
+    // setup default tcp target position and orientation
+    ofNode temp;
+    temp.setGlobalPosition(500, 0, 350);
+    tcp_target.setNode(temp);
+    
+    // setup default look at target position and orientation
+    temp = ofNode();
+    temp.setGlobalPosition(tcp_target.getTranslation().x + 1000, tcp_target.getTranslation().y, tcp_target.getTranslation().z - 5);
+    look_at_target.setNode(temp);
+    
+    // setup default sensor gizmo position and orientation
+    temp = ofNode();
+    temp.setGlobalPosition(0, 0, 0);                    // update with calibrated sensor position
+    temp.setGlobalOrientation(glm::quat(0, 0, 0, 1));   // update with calibrated sensor position
+    sensor_gizmo.setNode(temp);
 }
 
 //--------------------------------------------------------------
@@ -377,11 +445,11 @@ bool ofApp::disable_camera(){
 void ofApp::setup_gui(){
     
     params.setName("Navigation");
-    params.add(show_gui.set("Show_GUI", true));
-    params.add(show_top.set("TOP", true));
-    params.add(show_front.set("FRONT", false));
-    params.add(show_side.set("SIDE", false));
-    params.add(show_perspective.set("PERSP", false));
+    params.add(show_gui.set("Show_GUI\t('h')", true));
+    params.add(show_top.set("TOP\t\t('1')", true));
+    params.add(show_front.set("FRONT\t\t('2')", false));
+    params.add(show_side.set("SIDE\t\t('3')", false));
+    params.add(show_perspective.set("PERSP\t\t('4')", false));
     
     show_top.addListener(this, &ofApp::listener_show_top);
     show_front.addListener(this, &ofApp::listener_show_front);
@@ -402,18 +470,18 @@ void ofApp::setup_gui(){
     sensor_orientation.addListener(this, &ofApp::on_sensor_orientation_moved);
     
     panel_motion.setup("Motion_Parameters");
-    panel_motion.add(use_look_at.set("Use_Look_At", true));
+    panel_motion.add(use_look_at.set("Use_Look_At\t('l')", true));
+    panel_motion.add(use_agent.set("Use_Agent\t('a')", false));
     panel_motion.add(motion_lerp.set("Robot_Motion_Lerp", .5, .35, .95));
     panel_motion.add(motion_base_offset.set("Robot_Motion_Base_Off", 0, -1000, 1000));
-    panel_motion.add(use_agent.set("Use_Agent", false));
     panel_motion.add(agents.params);
     panel_motion.setPosition(panel.getPosition().x, panel_sensor.getPosition().y + panel_sensor.getHeight() + 5);
     
     use_look_at.addListener(this, &ofApp::on_use_look_at);
     
     panel_robot.setup("Robot_Controller");
-    panel_robot.add(use_osc.set("Use_OSC", false));
-    panel_robot.add(robot_live.set("Robot_LIVE", false));
+    panel_robot.add(use_osc.set("Use_OSC \t('o')", false));
+    panel_robot.add(robot_live.set("Robot_LIVE\t('m')", false));
     panel_robot.setPosition(panel_motion.getPosition().x, panel_motion.getPosition().y + panel_motion.getHeight() + 5);
     
     ofSetCircleResolution(60);
