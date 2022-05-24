@@ -32,7 +32,7 @@ This example is compatible with TouchOSC's [MultiXY Pad example](http://library.
 
 The following screen recording shows how to navigate the TouchOSC interface to setup an OSC connection on a mobile device. 
 
-> This `ip address` should be your computer's ip adress, and the `port` should match the `osc_receiver_port` in your application.
+> This `Host` should be your computer's ip adress, and the `port` should match the `osc_receiver_port` in your application.
 
 ![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_multixy_pad.gif)
 
