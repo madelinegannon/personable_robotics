@@ -19,6 +19,8 @@ void ofApp::setup(){
     
     // start robot
     robot.start();
+    
+    show_perspective.set(true);
 }
 
 //--------------------------------------------------------------

@@ -19,6 +19,8 @@ void ofApp::setup(){
     
     // start robot
     robot.start();
+    
+    show_perspective.set(true);
 }
 
 //--------------------------------------------------------------
@@ -662,6 +664,10 @@ void ofApp::keyPressed(int key){
     switch (key) {
         case 'f':
             ofToggleFullscreen();
+            break;
+        case 'o':
+        case 'O':
+            use_osc = !use_osc;
             break;
         case 'a':
         case 'A':
