@@ -25,7 +25,7 @@ Here we use an `agent` that moves towards the `target_tcp` position. The `agent`
 
 ## Using Rhino & Grasshopper
 
-This example is compatible with the included Rhino file `personable_robotics.3dm` and Grasshopper script `personable_robotics.3dm`.  You must install the Grasshopper plugin [GHowl](https://www.food4rhino.com/en/app/ghowl) prior to use. See [these instructions](https://www.food4rhino.com/en/faq#users-install-grasshopper-plugin) for how to install Grasshopper plugins.
+This example is compatible with the included Rhino file `personable_robotics.3dm` and Grasshopper script `personable_robotics.gh`.  You must install the Grasshopper plugin [GHowl](https://www.food4rhino.com/en/app/ghowl) prior to use. See [these instructions](https://www.food4rhino.com/en/faq#users-install-grasshopper-plugin) for how to install Grasshopper plugins.
 
 The Rhino file contains 2 labeled points, `tcp_target` and `look_at_target`, that send out their position to `example-osc` whenever they are moved.  
 
