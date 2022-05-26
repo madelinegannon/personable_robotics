@@ -23,6 +23,14 @@ Here we use an `agent` that moves towards the `target_tcp` position. The `agent`
 - `Derivative Gains` controls the _damping_
 - `Steering Scalar` adds an overall scalar to exaggerate or mitigate motion
 
+## Using Rhino & Grasshopper
+
+This example is compatible with the included Rhino file `personable_robotics.3dm` and Grasshopper script `personable_robotics.3dm`.  You must install the Grasshopper plugin [GHowl](https://www.food4rhino.com/en/app/ghowl) prior to use. See [these instructions](https://www.food4rhino.com/en/faq#users-install-grasshopper-plugin) for how to install Grasshopper plugins.
+
+The Rhino file contains 2 labeled points, `tcp_target` and `look_at_target`, that send out their position to `example-osc` whenever they are moved.  
+
+> Tested with Rhino 6 (Windows)
+
 ## Using TouchOSC
 
 This example is compatible with TouchOSC's [MultiXY Pad example](http://library.isr.ist.utl.pt/docs/roswiki/touchosc_bridge(2f)Controls.html#Multi_XY_Pad). The first touch controls the `tcp_target` position within a min/max range, and the second touch controls the `look_at_target` position within a min/max range.

@@ -122,7 +122,27 @@ void ofApp::check_for_msg(){
             temp.setGlobalOrientation(look_at_target.getRotation());
             look_at_target.setNode(temp);
         }
-        else if(m.getAddress() == "/multixy/1"){ // from TouchOSC example
+        // from Grasshopper example
+        else if(m.getAddress() == "/0/tcp_target"){
+            float x = m.getArgAsFloat(0);
+            float y = m.getArgAsFloat(1);
+            float z = m.getArgAsFloat(2);
+            ofNode temp;
+            temp.setGlobalPosition(x, y, z);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+        else if (m.getAddress() == "/0/look_at_target"){
+            float x = m.getArgAsFloat(0);
+            float y = m.getArgAsFloat(1);
+            float z = m.getArgAsFloat(2);
+            ofNode temp;
+            temp.setGlobalPosition(x, y, z);
+            temp.setGlobalOrientation(look_at_target.getRotation());
+            look_at_target.setNode(temp);
+        }
+        // from TouchOSC example
+        else if(m.getAddress() == "/multixy/1"){
             float x = m.getArgAsFloat(0);
             float y = tcp_target.getTranslation().y;
             float z = m.getArgAsFloat(1);
