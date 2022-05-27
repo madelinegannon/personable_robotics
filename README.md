@@ -41,6 +41,8 @@ git clone https://github.com/madelinegannon/personable_robotics.git
 
 6. Build the `example-simple` project using the [Project Generator](https://openframeworks.cc/learning/01_basics/create_a_new_project/).
 
+> To build from command line for linux arm `cd personable_robotics` && `projectGenerator -o"path/to/OF" -t"vscode" -r .`
+
 7. Run the project — move the Gizmo to move the Robot:
 - Press `W` to use the Translate Gizmo
 - Press `E` to use the Rotate Gizmo
