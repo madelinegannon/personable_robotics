@@ -21,6 +21,7 @@ cd of_v0.11.2_osx_release
 git lfs install 
 cd addons
 git clone https://github.com/CreativeInquiry/ofxRobotArm.git
+cd ofxRobotArm
 git checkout personable_robotics
 ```
 3. Run the `installAddons` script to grab all the necessary dependencies:
