@@ -26,7 +26,7 @@ git checkout personable_robotics
 ```
 3. Run the `installAddons` script to grab all the necessary dependencies:
 ```
-sudo ./installAddons.sh
+./installAddons.sh
 ```
 4. Check out the `dev-ur10` branch of `ofxURDriver`
 ```
