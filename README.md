@@ -13,7 +13,8 @@ This repository hosts a suite of software tools for learning real-time interacti
 
 # Getting Started
 1. Download and follow the setup guide for [openFrameworks](https://openframeworks.cc/download/) v.0.11.2
-2. Add the `ofxRobotArm` addon into the openFramworks `/adddon` folder:
+2. Install `git lfs` following [these instructions](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage)
+3. Add the `ofxRobotArm` addon into the openFramworks `/adddon` folder:
 
 ```
 cd of_v0.11.2_osx_release
