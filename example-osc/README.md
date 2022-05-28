@@ -37,6 +37,12 @@ This example is compatible with TouchOSC's [MultiXY Pad example](http://library.
 
 ![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_messages.png)
 
+## Using TouchDesigner
+
+**to do**
+
+[Tutorial](https://youtu.be/AcqC5rRmu3M)
+
 ### Setup
 
 The following screen recording shows how to navigate the TouchOSC interface to setup an OSC connection on a mobile device. 
