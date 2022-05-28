@@ -49,7 +49,15 @@ git clone https://github.com/madelinegannon/personable_robotics.git
 - Press `E` to use the Rotate Gizmo
 - When you're ready, move the simulated robot into a position near the actual robot. Then press the `Robot Live` Button to move the actual robot.
 
-### Troubleshooting Installation
+## Running on the Robot
+
+After every restart of the robot, or going into `Local` then `Remote` mode, you have to close and restart your openFrameworks example.
+
+1. Go into `Remote` Mode on the UR10e teach pendant (icon in the top right corner toggles between `Local` and `Remote`.
+2. Then start the openFrameworks example.
+3. Manually position the simulated robot close to the actual robot's joint configuration (*working on a automatic position button*).
+4. **CLEAR THE AREA**
+5. Press `M` or use the `Robot_Live` button in the GUI to move the robot.
 
 # Examples
 
