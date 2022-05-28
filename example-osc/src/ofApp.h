@@ -41,6 +41,15 @@ class ofApp : public ofBaseApp{
         ofxGizmo look_at_target;
         AgentController agents;
         void keypressed_gizmo(int key);
+    
+        // Safety bounds
+        ofxPanel panel_safety;
+        ofParameter<bool> show_bounds;
+        ofParameterGroup params_safety;
+        ofParameter<ofVec3f> aabb_pos, aabb_bounds;
+        void setup_bounds();
+        bool isInside(ofVec3f point, ofVec3f box_pos, ofVec3f box_bounds);
+        void draw_safety_bounds();
         
         // Scene
         void setup_scene();
@@ -70,9 +79,11 @@ class ofApp : public ofBaseApp{
         
         ofxPanel panel_robot;
         ofParameter<bool> use_osc;
+        ofParameter<bool> teleport;
         ofParameter<bool> robot_live;
         void draw_live_robot_warning();
         void on_use_look_at(bool & val);
+        void on_teleport(bool & val);
 
         ofColor background_inner = ofColor(238);
         ofColor background_outer = ofColor(118);

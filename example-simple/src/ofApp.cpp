@@ -7,8 +7,8 @@ void ofApp::setup(){
     setup_scene();
     
     // setup robot
-    string ip_address = "192.168.1.10"; // change this to your robot's IP address
-    bool offline = true; // change this to false when connected to the robot
+    string ip_address = "192.168.1.100"; // change this to your robot's IP address
+    bool offline = false; // change this to false when connected to the robot
     robot.setup(ip_address, robot_type, offline);
 
     // setup gui
@@ -29,8 +29,14 @@ void ofApp::update(){
     tcp.setGlobalOrientation(tcp_target.getRotation());
     robot.set_desired(tcp);
     
-    // update robot
-    robot.update();
+    // Check if the target tcp is within the safety box
+    ofVec3f pt = toOf(tcp_target.getTranslation());
+    if (isInside(pt, aabb_pos.get(), aabb_bounds.get()))
+    {
+        // update robot
+        robot.set_desired(tcp);
+        robot.update();
+    }
 }
 
 //--------------------------------------------------------------
@@ -50,6 +56,49 @@ void ofApp::draw(){
     }
 }
 
+#pragma mark - Safety
+//--------------------------------------------------------------
+/// From https://stackoverflow.com/questions/52673935/check-if-3d-point-inside-a-box
+bool ofApp::isInside(ofVec3f point, ofVec3f box_pos, ofVec3f box_bounds)
+{
+    /**
+      vec3 center;     // Center of the box.
+        vec3 dx, dy, dz; // X,Y, and Z directions, normalized.
+        vec3 half;         // Box size in each dimension, divided by 2.
+
+        vec3 point; // Point to test.
+        vec3 d = point - center;
+        bool inside = abs(dot(d, dx)) <= half.x &&
+                  abs(dot(d, dy)) <= half.y &&
+                  abs(dot(d, dz)) <= half.z;
+     */
+
+    ofVec3f center = box_pos;
+    ofVec3f half = box_bounds / 2;
+    ofVec3f d = point - center;
+    return abs(d.dot(ofVec3f(1, 0, 0))) <= half.x &&
+           abs(d.dot(ofVec3f(0, 1, 0))) <= half.y &&
+           abs(d.dot(ofVec3f(0, 0, 1))) <= half.z;
+}
+
+//--------------------------------------------------------------
+void ofApp::draw_safety_bounds(){
+    ofPushStyle();
+    // Draw the Tracking Boundary Box
+    ofVec3f pt = tcp_target.getTranslation();
+    if (isInside(pt, aabb_pos.get(), aabb_bounds.get()))
+    {
+        ofSetColor(ofColor::darkSlateGray, 100);
+    }
+    else
+    {
+        ofSetColor(ofColor::red);
+    }
+    ofNoFill();
+    ofDrawBox(aabb_pos.get(), aabb_bounds.get().x, aabb_bounds.get().y, aabb_bounds.get().z);
+    ofPopStyle();
+}
+
 #pragma mark - Scene
 //--------------------------------------------------------------
 void ofApp::setup_scene(){
@@ -61,6 +110,10 @@ void ofApp::setup_scene(){
 void ofApp::draw_scene(){
     cam.begin();
     ofDrawAxis(1500);
+    
+    if (show_bounds){
+        draw_safety_bounds();
+    }
     
     // Draw Desired Robot
     robot.drawPreview();
@@ -109,16 +162,27 @@ void ofApp::setup_gui(){
     panel.setup(params);
     panel.setPosition(10, 10);
     
+    panel_safety.setup("Safety_Bounds");
+    panel_safety.add(show_bounds.set("Show_Bounds", true));
+    params_safety.setName("Safety_Bounds_Params");
+    params_safety.add(aabb_pos.set("AABB_Pos", ofVec3f(625, 0, 300), ofVec3f(-1000, -1000, -1000), ofVec3f(1000, 1000, 1000)));
+    params_safety.add(aabb_bounds.set("AABB_Bounds", ofVec3f(650, 1200, 1200), ofVec3f(0, 0, 0), ofVec3f(1500, 1500, 1500)));
+    panel_safety.add(params_safety);
+    panel_safety.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
+    
     panel_robot.setup("Robot_Controller");
     panel_robot.add(robot_live.set("Robot_LIVE\t('m')", false));
-    panel_robot.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
+    panel_robot.setPosition(panel.getPosition().x, panel_safety.getPosition().y + panel_safety.getHeight() + 5);
     
     ofSetCircleResolution(60);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw_gui(){
+    panel_robot.setPosition(panel.getPosition().x, panel_safety.getPosition().y + panel_safety.getHeight() + 5);
+    
     panel.draw();
+    panel_safety.draw();
     panel_robot.draw();
     
     ofDrawBitmapStringHighlight("FPS: "+ofToString(ofGetFrameRate()), ofGetWidth()-100, 10);
@@ -268,6 +332,7 @@ void ofApp::keypressed_robot(int key){
         case 'm':
         case 'M':
             robot_live = !robot_live;
+            robot.set_live(robot_live);
             break;
     }
 }

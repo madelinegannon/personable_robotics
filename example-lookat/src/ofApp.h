@@ -35,6 +35,7 @@ class ofApp : public ofBaseApp{
         ofxOscReceiver receiver;
         int receive_port = 55555;
         void check_for_msg();
+    
         
         // Control & Interaction
         ofxGizmo tcp_target;
@@ -43,6 +44,15 @@ class ofApp : public ofBaseApp{
         void keypressed_gizmo(int key);
         void setup_gizmos();
         
+        // Safety bounds
+        ofxPanel panel_safety;
+        ofParameter<bool> show_bounds;
+        ofParameterGroup params_safety;
+        ofParameter<ofVec3f> aabb_pos, aabb_bounds;
+        void setup_bounds();
+        bool isInside(ofVec3f point, ofVec3f box_pos, ofVec3f box_bounds);
+        void draw_safety_bounds();
+
         // Scene
         void setup_scene();
         void update_scene();

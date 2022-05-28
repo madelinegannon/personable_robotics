@@ -7,8 +7,8 @@ void ofApp::setup(){
     setup_scene();
     
     // setup robot
-    string ip_address = "192.168.1.10"; // change this to your robot's IP address
-    bool offline = true; // change this to false when connected to the robot
+    string ip_address = "192.168.1.100"; // change this to your robot's IP address
+    bool offline = false; // change this to false when connected to the robot
     robot.setup(ip_address, robot_type, offline);
     
     // setup osc communications
@@ -82,9 +82,20 @@ void ofApp::update(){
         tcp.setGlobalOrientation(tcp_target.getRotation());
     }
     
-    // update robot
-    robot.set_desired(tcp);
-    robot.update();
+    // Check if the target tcp is within the safety box
+    ofVec3f pt;
+    if (use_agent){
+        pt = agents.get_pose(0).getGlobalPosition();
+    }
+    else{
+        pt = toOf(tcp_target.getTranslation());
+    }
+    if (isInside(pt, aabb_pos.get(), aabb_bounds.get()))
+    {
+        // update robot
+        robot.set_desired(tcp);
+        robot.update();
+    }
 }
 
 //--------------------------------------------------------------
@@ -242,6 +253,56 @@ void ofApp::check_for_msg(){
     
 }
 
+#pragma mark - Safety
+//--------------------------------------------------------------
+/// From https://stackoverflow.com/questions/52673935/check-if-3d-point-inside-a-box
+bool ofApp::isInside(ofVec3f point, ofVec3f box_pos, ofVec3f box_bounds)
+{
+    /**
+      vec3 center;     // Center of the box.
+        vec3 dx, dy, dz; // X,Y, and Z directions, normalized.
+        vec3 half;         // Box size in each dimension, divided by 2.
+
+        vec3 point; // Point to test.
+        vec3 d = point - center;
+        bool inside = abs(dot(d, dx)) <= half.x &&
+                  abs(dot(d, dy)) <= half.y &&
+                  abs(dot(d, dz)) <= half.z;
+     */
+
+    ofVec3f center = box_pos;
+    ofVec3f half = box_bounds / 2;
+    ofVec3f d = point - center;
+    return abs(d.dot(ofVec3f(1, 0, 0))) <= half.x &&
+           abs(d.dot(ofVec3f(0, 1, 0))) <= half.y &&
+           abs(d.dot(ofVec3f(0, 0, 1))) <= half.z;
+}
+
+//--------------------------------------------------------------
+void ofApp::draw_safety_bounds(){
+    ofPushStyle();
+    // Draw the Tracking Boundary Box
+    ofVec3f pt;
+    if (use_agent){
+        pt = agents.get_pose(0).getGlobalPosition();
+    }
+    else{
+        pt = tcp_target.getTranslation();
+    }
+    if (isInside(pt, aabb_pos.get(), aabb_bounds.get()))
+    {
+        ofSetColor(ofColor::darkSlateGray, 100);
+    }
+    else
+    {
+        ofSetColor(ofColor::red);
+    }
+    ofNoFill();
+    ofDrawBox(aabb_pos.get(), aabb_bounds.get().x, aabb_bounds.get().y, aabb_bounds.get().z);
+    ofPopStyle();
+}
+
+
 #pragma mark - Scene
 //--------------------------------------------------------------
 void ofApp::setup_scene(){
@@ -260,6 +321,10 @@ void ofApp::setup_scene(){
 void ofApp::draw_scene(){
     cam.begin();
     ofDrawAxis(1500);
+    
+    if (show_bounds){
+        draw_safety_bounds();
+    }
     
     // Draw Desired Robot
     robot.drawPreview();
@@ -461,12 +526,20 @@ void ofApp::setup_gui(){
     panel.setup(params);
     panel.setPosition(10, 10);
     
+    panel_safety.setup("Safety_Bounds");
+    panel_safety.add(show_bounds.set("Show_Bounds", true));
+    params_safety.setName("Safety_Bounds_Params");
+    params_safety.add(aabb_pos.set("AABB_Pos", ofVec3f(625, 0, 300), ofVec3f(-1000, -1000, -1000), ofVec3f(1000, 1000, 1000)));
+    params_safety.add(aabb_bounds.set("AABB_Bounds", ofVec3f(650, 1200, 1200), ofVec3f(0, 0, 0), ofVec3f(1500, 1500, 1500)));
+    panel_safety.add(params_safety);
+    panel_safety.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
+    
     panel_sensor.setup("Sensor_Parameters");
     panel_sensor.add(use_sensor.set("Use_Sensor_Input", true));
     panel_sensor.add(show_sensor_gizmo.set("Show_Sensor_Gizmo", true));
     panel_sensor.add(sensor_position.set("Sensor_Position", ofVec3f(), ofVec3f(-2000,-2000,-2000), ofVec3f(2000,2000,2000)));
     panel_sensor.add(sensor_orientation.set("Sensor_Orientation", ofVec4f(0,0,0,1),ofVec4f(-1,-1,-1,-1),ofVec4f(1,1,1,1)));
-    panel_sensor.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
+    panel_sensor.setPosition(panel.getPosition().x, panel_safety.getPosition().y + panel_safety.getHeight() + 5);
     
     sensor_position.addListener(this, &ofApp::on_sensor_position_moved);
     sensor_orientation.addListener(this, &ofApp::on_sensor_orientation_moved);
@@ -491,7 +564,13 @@ void ofApp::setup_gui(){
 
 //--------------------------------------------------------------
 void ofApp::draw_gui(){
+    
+    panel_sensor.setPosition(panel.getPosition().x, panel_safety.getPosition().y + panel_safety.getHeight() + 5);
+    panel_motion.setPosition(panel.getPosition().x, panel_sensor.getPosition().y + panel_sensor.getHeight() + 5);
+    panel_robot.setPosition(panel_motion.getPosition().x, panel_motion.getPosition().y + panel_motion.getHeight() + 5);
+    
     panel.draw();
+    panel_safety.draw();
     panel_sensor.draw();
     panel_motion.draw();
     panel_robot.draw();

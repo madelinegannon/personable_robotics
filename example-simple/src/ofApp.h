@@ -32,6 +32,15 @@ class ofApp : public ofBaseApp{
         // Control & Interaction
         ofxGizmo tcp_target;
         void keypressed_gizmo(int key);
+    
+        // Safety bounds
+        ofxPanel panel_safety;
+        ofParameter<bool> show_bounds;
+        ofParameterGroup params_safety;
+        ofParameter<ofVec3f> aabb_pos, aabb_bounds;
+        void setup_bounds();
+        bool isInside(ofVec3f point, ofVec3f box_pos, ofVec3f box_bounds);
+        void draw_safety_bounds();
         
         // Scene
         void setup_scene();

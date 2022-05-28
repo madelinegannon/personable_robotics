@@ -1,5 +1,7 @@
 #include "ofApp.h"
 
+//#define PRINT_POSE
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     
@@ -7,8 +9,8 @@ void ofApp::setup(){
     setup_scene();
     
     // setup robot
-    string ip_address = "192.168.1.10"; // change this to your robot's IP address
-    bool offline = true; // change this to false when connected to the robot
+    string ip_address = "192.168.1.100"; // change this to your robot's IP address
+    bool offline = false; // change this to false when connected to the robot
     robot.setup(ip_address, robot_type, offline);
     
     // setup osc communications
@@ -71,9 +73,43 @@ void ofApp::update(){
         tcp.setGlobalOrientation(tcp_target.getRotation());
     }
     
-    // update robot
-    robot.set_desired(tcp);
-    robot.update();
+#ifdef PRINT_POSE
+    // debugging the actual vs sim arm's joint positions:
+    auto pose = robot.getCurrentPose();
+    cout << "Current Pose:\t[";
+    for (auto p : pose){
+        cout << ofRadToDeg(p) << ", ";
+    }
+    cout << "]" << endl;
+#endif
+    
+    // Check if the target tcp is within the safety box
+    ofVec3f pt;
+    if (use_agent){
+        pt = agents.get_pose(0).getGlobalPosition();
+    }
+    else{
+        pt = toOf(tcp_target.getTranslation());
+    }
+    if (isInside(pt, aabb_pos.get(), aabb_bounds.get()))
+    {
+        // update robot
+        robot.set_desired(tcp);
+        robot.update();
+    }
+    
+    // @FIXME: Teleporting not working
+//    robot.update(pose);
+//    if (teleport){
+//        auto val = true;
+//        on_teleport(tel);
+//    }
+//    else{
+//        robot.set_desired(tcp);
+//        robot.update();
+//    }
+//    auto val = teleport.get();
+//    on_teleport(val);
 }
 
 //--------------------------------------------------------------
@@ -208,7 +244,55 @@ void ofApp::check_for_msg(){
             cout << msgString << endl;
         }
     }
-    
+}
+
+#pragma mark - Safety
+//--------------------------------------------------------------
+/// From https://stackoverflow.com/questions/52673935/check-if-3d-point-inside-a-box
+bool ofApp::isInside(ofVec3f point, ofVec3f box_pos, ofVec3f box_bounds)
+{
+    /**
+      vec3 center;     // Center of the box.
+        vec3 dx, dy, dz; // X,Y, and Z directions, normalized.
+        vec3 half;         // Box size in each dimension, divided by 2.
+
+        vec3 point; // Point to test.
+        vec3 d = point - center;
+        bool inside = abs(dot(d, dx)) <= half.x &&
+                  abs(dot(d, dy)) <= half.y &&
+                  abs(dot(d, dz)) <= half.z;
+     */
+
+    ofVec3f center = box_pos;
+    ofVec3f half = box_bounds / 2;
+    ofVec3f d = point - center;
+    return abs(d.dot(ofVec3f(1, 0, 0))) <= half.x &&
+           abs(d.dot(ofVec3f(0, 1, 0))) <= half.y &&
+           abs(d.dot(ofVec3f(0, 0, 1))) <= half.z;
+}
+
+//--------------------------------------------------------------
+void ofApp::draw_safety_bounds(){
+    ofPushStyle();
+    // Draw the Tracking Boundary Box
+    ofVec3f pt;
+    if (use_agent){
+        pt = agents.get_pose(0).getGlobalPosition();
+    }
+    else{
+        pt = tcp_target.getTranslation();
+    }
+    if (isInside(pt, aabb_pos.get(), aabb_bounds.get()))
+    {
+        ofSetColor(ofColor::darkSlateGray, 100);
+    }
+    else
+    {
+        ofSetColor(ofColor::red);
+    }
+    ofNoFill();
+    ofDrawBox(aabb_pos.get(), aabb_bounds.get().x, aabb_bounds.get().y, aabb_bounds.get().z);
+    ofPopStyle();
 }
 
 #pragma mark - Scene
@@ -232,6 +316,10 @@ void ofApp::draw_scene(){
     cam.begin();
     ofDrawAxis(1500);
     
+    if (show_bounds){
+        draw_safety_bounds();
+    }
+    
     // Draw Desired Robot
     robot.drawPreview();
     
@@ -244,7 +332,14 @@ void ofApp::draw_scene(){
     // Draw the Look At Target Gizmo
     if (use_look_at){
         ofSetColor(ofColor::cyan, 100);
-        ofDrawLine(tcp_target.getTranslation(), look_at_target.getTranslation());
+        ofVec3f pt;
+        if (use_agent){
+            pt = agents.get_pose(0).getGlobalPosition();
+        }
+        else{
+            pt = tcp_target.getTranslation();
+        }
+        ofDrawLine(pt, look_at_target.getTranslation());
         look_at_target.draw(cam);
     }
     // Draw the Agent
@@ -293,25 +388,59 @@ void ofApp::setup_gui(){
     panel.setup(params);
     panel.setPosition(10, 10);
     
+    panel_safety.setup("Safety_Bounds");
+    panel_safety.add(show_bounds.set("Show_Bounds", true));
+    params_safety.setName("Safety_Bounds_Params");
+    params_safety.add(aabb_pos.set("AABB_Pos", ofVec3f(625, 0, 300), ofVec3f(-1000, -1000, -1000), ofVec3f(1000, 1000, 1000)));
+    params_safety.add(aabb_bounds.set("AABB_Bounds", ofVec3f(650, 1200, 1200), ofVec3f(0, 0, 0), ofVec3f(1500, 1500, 1500)));
+    panel_safety.add(params_safety);
+    panel_safety.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
+    
     panel_motion.setup("Motion_Parameters");
     panel_motion.add(use_look_at.set("Use_Look_At\t('l')", true));
     panel_motion.add(use_agent.set("Use_Agent\t('a')", false));
     panel_motion.add(agents.params);
-    panel_motion.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
+    panel_motion.setPosition(panel.getPosition().x, panel_safety.getPosition().y + panel_safety.getHeight() + 5);
     
     use_look_at.addListener(this, &ofApp::on_use_look_at);
     
     panel_robot.setup("Robot_Controller");
     panel_robot.add(use_osc.set("Use_OSC \t('o')", false));
+    panel_robot.add(teleport.set("Teleport\t('t')", false));
     panel_robot.add(robot_live.set("Robot_LIVE\t('m')", false));
     panel_robot.setPosition(panel_motion.getPosition().x, panel_motion.getPosition().y + panel_motion.getHeight() + 5);
+    
+//    teleport.addListener(this, &ofApp::on_teleport);
     
     ofSetCircleResolution(60);
 }
 
 //--------------------------------------------------------------
+void ofApp::on_teleport(bool &val){
+    if (val){
+        // update the robot's joint positions to the actual robot's joint positions
+        robot.update(robot.getCurrentPose());
+        // move the tcp_target to the new tcp pose
+        tcp_target.setNode(robot.previewArm.nodes[5]);
+    }
+    else{
+        ofNode temp;
+        temp.setGlobalPosition(tcp_target.getTranslation());
+        temp.setGlobalOrientation(tcp_target.getRotation());
+        robot.set_desired(temp);
+        robot.update();
+    }
+}
+
+//--------------------------------------------------------------
 void ofApp::draw_gui(){
+    
+    panel_motion.setPosition(panel.getPosition().x, panel_safety.getPosition().y + panel_safety.getHeight() + 5);
+    
+    panel_robot.setPosition(panel_motion.getPosition().x, panel_motion.getPosition().y + panel_motion.getHeight() + 5);
+    
     panel.draw();
+    panel_safety.draw();
     panel_motion.draw();
     panel_robot.draw();
     
@@ -483,8 +612,16 @@ void ofApp::keypressed_robot(int key){
         case 'm':
         case 'M':
             robot_live = !robot_live;
+            robot.robotParams.bMove = robot_live;
+            robot.set_live(robot_live);
             // TODO: move sim robot to real robot joint positions
             break;
+        case 't':{
+            teleport.set(!teleport.get());
+            auto val = teleport.get();
+            on_teleport(val);
+            break;
+        }
     }
 }
 
