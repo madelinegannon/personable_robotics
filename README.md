@@ -28,7 +28,7 @@ git checkout personable_robotics
 ```
 ./installAddons.sh
 ```
-4. Check out the `dev-ur10` branch of `ofxURDriver`
+4. Check out the `dpersonable_robotics` branch of `ofxURDriver`
 ```
 cd ../ofxURDriver
 git checkout personable_robotics
