@@ -76,7 +76,3 @@ After every restart of the robot, or going into `Local` then `Remote` mode, you 
 
 (gif)
 
-## example-touch
-`example-touch` uses a depth camera as a touch sensor for interacting with the robot. This is the most advanced example, and it requires the most careful calibration between sensor, robot, and environment.
-
-(gif)
