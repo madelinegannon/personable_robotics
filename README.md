@@ -31,7 +31,7 @@ git checkout personable_robotics
 4. Check out the `dev-ur10` branch of `ofxURDriver`
 ```
 cd ../ofxURDriver
-git checkout dev-ur10
+git checkout personable_robotics
 ```
 
 5. Download this repo into your openFrameworks `/apps` directory:
