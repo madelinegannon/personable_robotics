@@ -3,7 +3,7 @@
 #### MRAC Workshop 3.2 for [IAAC](https://iaac.net)
 _Barcelona, Spain — May 30 - June 3, 2022_
 
-_an incomplete list ..._
+_ ... a totally incomplete list ..._
 
 ## AATB / Superposition
 
