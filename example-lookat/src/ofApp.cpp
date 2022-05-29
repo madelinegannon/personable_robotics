@@ -144,7 +144,8 @@ void ofApp::check_for_msg(){
             temp.setGlobalOrientation(tcp_target.getRotation());
             look_at_target.setNode(temp);
         }
-        else if(m.getAddress() == "/multixy/1"){ // from TouchOSC example
+        // TouchOSC Example
+        else if(m.getAddress() == "/multixy/1"){
             float x = m.getArgAsFloat(0);
             float y = tcp_target.getTranslation().y;
             float z = m.getArgAsFloat(1);
@@ -181,6 +182,44 @@ void ofApp::check_for_msg(){
             temp.setGlobalOrientation(look_at_target.getRotation());
             look_at_target.setNode(temp);
         }
+        // Touch Designer Example
+        else if(m.getAddress() == "/_samplerate"){
+            // do nothing
+        }
+        else if(m.getAddress() == "/v1"){
+            float min = aabb_pos.get().x - aabb_bounds.get().x/2;
+            float max = aabb_pos.get().x + aabb_bounds.get().x/2;
+            
+            auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+            
+            ofNode temp;
+            temp.setGlobalPosition(val, tcp_target.getTranslation().y, tcp_target.getTranslation().z);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+        else if(m.getAddress() == "/v2"){
+            float min = aabb_pos.get().y - aabb_bounds.get().y/2;
+            float max = aabb_pos.get().y + aabb_bounds.get().y/2;
+            
+            auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+            
+            ofNode temp;
+            temp.setGlobalPosition(tcp_target.getTranslation().x, val, tcp_target.getTranslation().z);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+        else if(m.getAddress() == "/v3"){
+            float min = aabb_pos.get().z - aabb_bounds.get().z/2;
+            float max = aabb_pos.get().z + aabb_bounds.get().z/2;
+            
+            auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+            
+            ofNode temp;
+            temp.setGlobalPosition(tcp_target.getTranslation().x, tcp_target.getTranslation().y, val);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+        // Azure Kinect Example
         else if (m.getAddress() == "/joint"){
             int index = m.getArgAsInt(0);
             float x = m.getArgAsFloat(1);
