@@ -13,6 +13,8 @@ _an incomplete list ..._
 2. [Soap Opera](https://www.aatb.ch/exhibitions/soap-opera-va-dundee-gbr-2019/), 2019
 3. [Big Players](https://www.aatb.ch/exhibitions/big-players/), 2020
 
+![](https://www.aatb.ch/wp-content/uploads/2020/08/AATB-handshake-00-Lowres-1200x800.jpg)
+
 ## Addie Wagenknecht
 
 [Addie Wagenknecht](https://www.placesiveneverbeen.com/) is an American artist based in Austria whose work explores the tension between expression and technology. Blending conceptually driven painting, sculpture, and installation with the ethos of hacker culture, Wagenknecht constructs spaces between art object and lived experience.
