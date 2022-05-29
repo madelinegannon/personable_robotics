@@ -22,6 +22,7 @@ _an incomplete list ..._
 1. [Optimization of Parenting, Part 2](https://www.placesiveneverbeen.com/works/optimization-of-parenting-part-2), 2012
 2. [Alone Together](https://www.placesiveneverbeen.com/works/alone-together), 2017-
 
+![](https://static.wixstatic.com/media/7066dc_781966c506fc4c8880d0a3d0c9d1e55d~mv2_d_3465_2310_s_2.jpg/v1/fill/w_1620,h_1080,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/7066dc_781966c506fc4c8880d0a3d0c9d1e55d~mv2_d_3465_2310_s_2.jpg)
 
 ## Behnaz Farahi
 
@@ -31,12 +32,15 @@ _an incomplete list ..._
 2. [Iridescence](https://behnazfarahi.com/Iridescence/), 2019
 3. [Returning the Gaze](https://behnazfarahi.com/returning-the-gaze/), 2022
 
+![](https://behnazfarahi.com/Iridescence/1.jpg)
 
 ## Dragan Ilic
 
 The starting point in [Dragan Ilic's](https://www.draganilic.org/) work is conceptual analysis and de/reconstruction of the process of drawing as inscription of bodily activities on paper and opening the space for communication of ideas or realization of specific artistic intentions.
 
-1. [RoboAction(s) A1 K1](), _[video](https://youtu.be/-y68WLvSBts)_, 2016
+1. [RoboAction(s) A1 K1](https://www.draganilic.org/work/2016/), _[video](https://youtu.be/-y68WLvSBts)_, 2016
+
+![]()
 
 
 ## Edward Ihnatowicz
