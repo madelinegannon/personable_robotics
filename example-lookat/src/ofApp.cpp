@@ -529,8 +529,8 @@ void ofApp::setup_gui(){
     panel_safety.setup("Safety_Bounds");
     panel_safety.add(show_bounds.set("Show_Bounds", true));
     params_safety.setName("Safety_Bounds_Params");
-    params_safety.add(aabb_pos.set("AABB_Pos", ofVec3f(625, 0, 300), ofVec3f(-1000, -1000, -1000), ofVec3f(1000, 1000, 1000)));
-    params_safety.add(aabb_bounds.set("AABB_Bounds", ofVec3f(650, 1200, 1200), ofVec3f(0, 0, 0), ofVec3f(1500, 1500, 1500)));
+    params_safety.add(aabb_pos.set("AABB_Pos", ofVec3f(815, 0, 300), ofVec3f(-1000, -1000, -1000), ofVec3f(1000, 1000, 1000)));
+    params_safety.add(aabb_bounds.set("AABB_Bounds", ofVec3f(570, 1200, 1200), ofVec3f(0, 0, 0), ofVec3f(1500, 1500, 1500)));
     panel_safety.add(params_safety);
     panel_safety.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
     

@@ -183,10 +183,10 @@ void ofApp::check_for_msg(){
             float y = tcp_target.getTranslation().y;
             float z = m.getArgAsFloat(1);
             
-            float min_x = 400;
-            float max_x = 1000;
-            float min_z = -800;
-            float max_z = 800;
+            float min_x = aabb_pos.get().x - aabb_bounds.get().x/2;
+            float max_x = aabb_pos.get().x + aabb_bounds.get().x/2;
+            float min_z = aabb_pos.get().z - aabb_bounds.get().z/2;
+            float max_z = aabb_pos.get().z + aabb_bounds.get().z/2;
             
             x = ofMap(x, 0, 1, min_x, max_x, true);
             z = ofMap(z, 1, 0, min_z, max_z, true);
@@ -202,10 +202,11 @@ void ofApp::check_for_msg(){
             float z = m.getArgAsFloat(1);
             
             float offset = 500;
-            float min_x = 400;
-            float max_x = 1000;
-            float min_z = -800;
-            float max_z = 800;
+            
+            float min_x = aabb_pos.get().x - aabb_bounds.get().x/2;
+            float max_x = aabb_pos.get().x + aabb_bounds.get().x/2;
+            float min_z = aabb_pos.get().z - aabb_bounds.get().z/2;
+            float max_z = aabb_pos.get().z + aabb_bounds.get().z/2;
             
             x = ofMap(x, 0, 1, min_x+offset, max_x+offset, true);
             z = ofMap(z, 1, 0, min_z+offset, max_z+offset, true);
@@ -214,6 +215,43 @@ void ofApp::check_for_msg(){
             temp.setGlobalPosition(x, y, z);
             temp.setGlobalOrientation(look_at_target.getRotation());
             look_at_target.setNode(temp);
+        }
+        // Touch Designer Example
+        else if(m.getAddress() == "/_samplerate"){
+            // do nothing
+        }
+        else if(m.getAddress() == "/v1"){
+            float min = aabb_pos.get().x - aabb_bounds.get().x/2;
+            float max = aabb_pos.get().x + aabb_bounds.get().x/2;
+            
+            auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+            
+            ofNode temp;
+            temp.setGlobalPosition(val, tcp_target.getTranslation().y, tcp_target.getTranslation().z);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+        else if(m.getAddress() == "/v2"){
+            float min = aabb_pos.get().y - aabb_bounds.get().y/2;
+            float max = aabb_pos.get().y + aabb_bounds.get().y/2;
+            
+            auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+            
+            ofNode temp;
+            temp.setGlobalPosition(tcp_target.getTranslation().x, val, tcp_target.getTranslation().z);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+        else if(m.getAddress() == "/v3"){
+            float min = aabb_pos.get().z - aabb_bounds.get().z/2;
+            float max = aabb_pos.get().z + aabb_bounds.get().z/2;
+            
+            auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+            
+            ofNode temp;
+            temp.setGlobalPosition(tcp_target.getTranslation().x, tcp_target.getTranslation().y, val);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
         }
         // unrecognized message
         else{
@@ -391,8 +429,8 @@ void ofApp::setup_gui(){
     panel_safety.setup("Safety_Bounds");
     panel_safety.add(show_bounds.set("Show_Bounds", true));
     params_safety.setName("Safety_Bounds_Params");
-    params_safety.add(aabb_pos.set("AABB_Pos", ofVec3f(625, 0, 300), ofVec3f(-1000, -1000, -1000), ofVec3f(1000, 1000, 1000)));
-    params_safety.add(aabb_bounds.set("AABB_Bounds", ofVec3f(650, 1200, 1200), ofVec3f(0, 0, 0), ofVec3f(1500, 1500, 1500)));
+    params_safety.add(aabb_pos.set("AABB_Pos", ofVec3f(815, 0, 300), ofVec3f(-1000, -1000, -1000), ofVec3f(1000, 1000, 1000)));
+    params_safety.add(aabb_bounds.set("AABB_Bounds", ofVec3f(570, 1200, 1200), ofVec3f(0, 0, 0), ofVec3f(1500, 1500, 1500)));
     panel_safety.add(params_safety);
     panel_safety.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
     

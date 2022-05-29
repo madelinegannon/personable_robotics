@@ -149,12 +149,12 @@ void Agent::setup_gui()
     // setup gui params
     string name = "Agent_Params_" + ofToString(id);
     params.setName(name);
-    
-    params.add(radius.set("radius", 100, 1, 1500));
+    radius.set("radius", 100, 1, 1500);
+//    params.add(radius.set("radius", 100, 1, 1500));
 
     params.add(kp.set("Proportional_Gains", 10, 0, 30));    // PD controller gains for Propotional Component
-    params.add(kd.set("Derivative_Gains", 2.5, 0, 10));      // PD controller gains for Derivitive Component
-    params.add(steering_scalar.set("Steering_Scalar", 1.0, 0,5));
+    params.add(kd.set("Derivative_Gains", 5, 0, 10));      // PD controller gains for Derivitive Component
+    params.add(steering_scalar.set("Steering_Scalar", .25, 0,5));
     
     color = ofColor::magenta;
 }
