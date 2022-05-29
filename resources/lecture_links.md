@@ -68,7 +68,7 @@ The starting point in [Dragan Ilic's](https://www.draganilic.org/) work is conce
 3. [Manus](https://atonaton.com/manus), 2018
 4. [Other Natures](https://atonaton.com/other-natures), 2022
 
-![](https://images.squarespace-cdn.com/content/v1/5758289d27d4bdf581e1c031/3b7fa894-6c79-49e0-a82f-afbf8d9cd5c2/other_natures_gesture_clap_shoo.gif?format=1500w)
+![](https://miro.medium.com/max/1400/1*rNtOPlzy3BttRCqRoPRguQ.jpeg)
 
 ## Raising Robotic Natives
 
@@ -97,7 +97,7 @@ The starting point in [Dragan Ilic's](https://www.draganilic.org/) work is conce
 2. [Omnia per Omnia](https://sougwen.com/project/omniaperomnia), 2018
 3. [Exquisite Corpus](https://sougwen.com/project/exquisite-corpus), 2019
 
-![](https://sougwen.com/wp-content/uploads/2018/05/sougwen_2018_omnia_08.gif)
+![](https://sougwen.com/wp-content/uploads/2019/06/BB2EBFAE-8546-4BEF-B4CD-7032BD1C3F1F.jpg)
 
 ## Studio Zoro Feigl
 
