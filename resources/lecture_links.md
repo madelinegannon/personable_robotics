@@ -40,8 +40,7 @@ The starting point in [Dragan Ilic's](https://www.draganilic.org/) work is conce
 
 1. [RoboAction(s) A1 K1](https://www.draganilic.org/work/2016/), _[video](https://youtu.be/-y68WLvSBts)_, 2016
 
-![]()
-
+![](https://www.researchgate.net/publication/346822886/figure/fig2/AS:1021713017995264@1620606774137/Roboaction-A1-Dragan-Ilic.jpg)
 
 ## Edward Ihnatowicz
 [Edward Ihnatowicz](https://www.senster.com/ihnatowicz/) was a Cybernetic Sculptor active in the late 1960's and early 1970's. His ground-breaking sculptures explored the interaction between his robotic works and the audience, and reached their height with The Senster, a large (15 feet long), hydraulic robot commissioned by the electronics giant, Philips, for their permanent showplace, the Evoluon, in Eindhoven in 1970. The sculpture used sound and movement sensors to react to the behaviour of the visitors. It was one of the first computer controlled interactive robotic works of art.
@@ -49,12 +48,15 @@ The starting point in [Dragan Ilic's](https://www.draganilic.org/) work is conce
 1. [S.A.M.](http://www.senster.com/ihnatowicz/SAM/index.htm), _[video](https://youtu.be/8b52qpyV__g)_, 1969
 2. [Senster](http://www.senster.com/ihnatowicz/senster/index.htm), _[video](https://youtu.be/wY85GrYGnyw)_, 1970
 
+![](https://proyectoidis.org/wp-content/uploads/2013/08/senster9-lrg.jpg)
 
 ## Golan Levin
 
 [Golan Levin](http://flong.com/archive/index.html) is a media artist and educator developing artifacts and experiences which explore the expressive use of computation. His work focuses on the design of systems for the creation, manipulation and performance of simultaneous image and sound, as part of a more general inquiry into the formal language of interactivity, and of nonverbal communications protocols in cybernetic systems.
 
 1. [Snout / Double-Taker](http://flong.com/archive/projects/snout/index.html), 2008
+
+![](http://flong.com/archive/storage/images/projects/snout.jpg)
 
 ## Madeline Gannon :sunglasses:
 
@@ -65,6 +67,8 @@ The starting point in [Dragan Ilic's](https://www.draganilic.org/) work is conce
 2. [Mimus](https://atonaton.com/manus), 2016
 3. [Manus](https://atonaton.com/manus), 2018
 4. [Other Natures](https://atonaton.com/other-natures), 2022
+
+![](https://images.squarespace-cdn.com/content/v1/5758289d27d4bdf581e1c031/3b7fa894-6c79-49e0-a82f-afbf8d9cd5c2/other_natures_gesture_clap_shoo.gif?format=1500w)
 
 ## Raising Robotic Natives
 
@@ -83,6 +87,7 @@ The starting point in [Dragan Ilic's](https://www.draganilic.org/) work is conce
 
   - [“My First Robot” Childrens book on Issuu](https://issuu.com/roboticnative/docs/my_first_robot)
 
+![](https://philippschmitt.com/archive/2018/work/img/robotic-natives-costume.jpg)
 
 ## Sougwen Chung
 
@@ -92,6 +97,8 @@ The starting point in [Dragan Ilic's](https://www.draganilic.org/) work is conce
 2. [Omnia per Omnia](https://sougwen.com/project/omniaperomnia), 2018
 3. [Exquisite Corpus](https://sougwen.com/project/exquisite-corpus), 2019
 
+![](https://sougwen.com/wp-content/uploads/2018/05/sougwen_2018_omnia_08.gif)
+
 ## Studio Zoro Feigl
 
 The installations of [Zoro Feigl](https://www.zorofeigl.nl/) (1983, Amsterdam) seem to be alive. His materials dance and twist. Placed together in a space, the separate works become one: large and ponderous in places, nervous or gracious elsewhere.
@@ -99,4 +106,6 @@ The installations of [Zoro Feigl](https://www.zorofeigl.nl/) (1983, Amsterdam) s
 Feigl’s forms are constantly changing, sometimes slowly, sometimes quickly. Without beginning or end the objects seem to be locked into themselves. As a viewer you become entangled in their movements: they embrace and amaze, but sometimes also frighten you.
 
 1. [ABB's First Steps](https://www.zorofeigl.nl/abb/), 2018
+
+![](https://www.zorofeigl.nl/wp-content/uploads/Robot-Love.-Zoro-Feigl.-ABB_s-first-steps_2.-Photo-Peter-Cox.jpg-1024x643.jpg)
 
