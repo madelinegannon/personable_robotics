@@ -37,7 +37,7 @@ The Rhino file contains 2 labeled points, `tcp_target` and `look_at_target`, tha
 
 This example is compatible with the `personal_robotics_osc.tosc` template.
 
-![](![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_template.png))
+![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_template.png)
 
 > Use the `personal_robotics_osc.tosc` in TouchOSC as a starting point for sending data to the robot.
 
