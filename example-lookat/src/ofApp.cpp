@@ -1,5 +1,7 @@
 #include "ofApp.h"
 
+//#define PRINT_POSE
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     
@@ -8,7 +10,7 @@ void ofApp::setup(){
     
     // setup robot
     string ip_address = "192.168.1.100"; // change this to your robot's IP address
-    bool offline = false; // change this to false when connected to the robot
+    bool offline = true; // change this to false when connected to the robot
     robot.setup(ip_address, robot_type, offline);
     
     // setup osc communications
@@ -26,20 +28,28 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    // receive external positions over OSC (should be in mm)
-    if (use_osc){
-        check_for_msg();
-    }
+//    // receive external positions over OSC (should be in mm)
+//    if (use_osc){
+//        check_for_msg();
+//    }
     
     // update the lookat point (TODO: should be inside check for message
     if (use_sensor){
         ofNode temp;
-        temp.setGlobalPosition(get_closest_joint_position());
+        if (use_kinect)
+            temp.setGlobalPosition(get_closest_joint_position());
+        if (use_vive)
+            temp.setGlobalPosition(get_closest_streamed_position());
         // don't need to worry about orientation
         look_at_target.setNode(temp); ;
         
         // update the tcp_target based on the sensor input
         update_motion_behaviors();
+    }
+    
+    // receive external positions over OSC (should be in mm)
+    if (use_osc){
+        check_for_msg();
     }
     
     // if we want to use a look_at target for the orientation
@@ -82,6 +92,16 @@ void ofApp::update(){
         tcp.setGlobalOrientation(tcp_target.getRotation());
     }
     
+#ifdef PRINT_POSE
+    // debugging the actual vs sim arm's joint positions:
+    auto pose = robot.getCurrentPose();
+    cout << "Current Pose:\t[";
+    for (auto p : pose){
+        cout << ofRadToDeg(p) << ", ";
+    }
+    cout << "]" << endl;
+#endif
+    
     // Check if the target tcp is within the safety box
     ofVec3f pt;
     if (use_agent){
@@ -96,6 +116,7 @@ void ofApp::update(){
         robot.set_desired(tcp);
         robot.update();
     }
+        
 }
 
 //--------------------------------------------------------------
@@ -118,9 +139,10 @@ void ofApp::draw(){
 #pragma mark - Communications
 //--------------------------------------------------------------
 void ofApp::check_for_msg(){
+    
     // check for waiting messages
     while(receiver.hasWaitingMessages()){
-
+        
         // get the next message
         ofxOscMessage m;
         receiver.getNextMessage(m);
@@ -144,111 +166,6 @@ void ofApp::check_for_msg(){
             temp.setGlobalOrientation(tcp_target.getRotation());
             look_at_target.setNode(temp);
         }
-        // TouchOSC Example
-        else if(m.getAddress() == "/multixy/1"){
-            float x = m.getArgAsFloat(0);
-            float y = tcp_target.getTranslation().y;
-            float z = m.getArgAsFloat(1);
-            
-            float min_x = 400;
-            float max_x = 1000;
-            float min_z = -800;
-            float max_z = 800;
-            
-            x = ofMap(x, 0, 1, min_x, max_x, true);
-            z = ofMap(z, 1, 0, min_z, max_z, true);
-            
-            ofNode temp;
-            temp.setGlobalPosition(x, y, z);
-            temp.setGlobalOrientation(tcp_target.getRotation());
-            tcp_target.setNode(temp);
-        }
-        else if(m.getAddress() == "/multixy/2"){
-            float x = m.getArgAsFloat(0);
-            float y = look_at_target.getTranslation().y;
-            float z = m.getArgAsFloat(1);
-            
-            float offset = 500;
-            float min_x = 400;
-            float max_x = 1000;
-            float min_z = -800;
-            float max_z = 800;
-            
-            x = ofMap(x, 0, 1, min_x+offset, max_x+offset, true);
-            z = ofMap(z, 1, 0, min_z+offset, max_z+offset, true);
-            
-            ofNode temp;
-            temp.setGlobalPosition(x, y, z);
-            temp.setGlobalOrientation(look_at_target.getRotation());
-            look_at_target.setNode(temp);
-        }
-        // Touch Designer Example
-        else if(m.getAddress() == "/_samplerate"){
-            // do nothing
-        }
-        else if(m.getAddress() == "/v1"){
-            float min = aabb_pos.get().x - aabb_bounds.get().x/2;
-            float max = aabb_pos.get().x + aabb_bounds.get().x/2;
-            
-            auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
-            
-            ofNode temp;
-            temp.setGlobalPosition(val, tcp_target.getTranslation().y, tcp_target.getTranslation().z);
-            temp.setGlobalOrientation(tcp_target.getRotation());
-            tcp_target.setNode(temp);
-        }
-        else if(m.getAddress() == "/v2"){
-            float min = aabb_pos.get().y - aabb_bounds.get().y/2;
-            float max = aabb_pos.get().y + aabb_bounds.get().y/2;
-            
-            auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
-            
-            ofNode temp;
-            temp.setGlobalPosition(tcp_target.getTranslation().x, val, tcp_target.getTranslation().z);
-            temp.setGlobalOrientation(tcp_target.getRotation());
-            tcp_target.setNode(temp);
-        }
-        else if(m.getAddress() == "/v3"){
-            float min = aabb_pos.get().z - aabb_bounds.get().z/2;
-            float max = aabb_pos.get().z + aabb_bounds.get().z/2;
-            
-            auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
-            
-            ofNode temp;
-            temp.setGlobalPosition(tcp_target.getTranslation().x, tcp_target.getTranslation().y, val);
-            temp.setGlobalOrientation(tcp_target.getRotation());
-            tcp_target.setNode(temp);
-        }
-        // Azure Kinect Example
-        else if (m.getAddress() == "/joint"){
-            int index = m.getArgAsInt(0);
-            float x = m.getArgAsFloat(1);
-            float y = m.getArgAsFloat(2);
-            float z = m.getArgAsFloat(3);
-            float qw = m.getArgAsFloat(4);
-            float qx = m.getArgAsFloat(5);
-            float qy = m.getArgAsFloat(6);
-            float qz = m.getArgAsFloat(7);
-            joints[index].setPosition(x, y, z); // <-- don't use Global Position
-            joints[index].setGlobalOrientation(glm::quat(qw, qx, qy, qz));
-        }
-        else if (m.getAddress() == "/skeleton"){
-            int body_id = m.getArgAsInt(0);
-            int msg_count = 8;
-            for(int i = 1; i < m.getNumArgs()-msg_count; i+=msg_count){
-                int index = m.getArgAsInt(i);
-                float x = m.getArgAsFloat(i+1);
-                float y = m.getArgAsFloat(i+2);
-                float z = m.getArgAsFloat(i+3);
-                float qw = m.getArgAsFloat(i+4);
-                float qx = m.getArgAsFloat(i+5);
-                float qy = m.getArgAsFloat(i+6);
-                float qz = m.getArgAsFloat(i+7);
-                joints[index].setPosition(x, y, z); // <-- don't use Global Position
-                joints[index].setGlobalOrientation(glm::quat(qw, qx, qy, qz));
-            }
-        }
-        // Motion Behavior Parameters can be updated over OSC
         else if(m.getAddress() == "/motion_lerp"){
             float t = m.getArgAsFloat(0);   // value should be in range {0,1}
             motion_lerp.set(t);
@@ -258,8 +175,30 @@ void ofApp::check_for_msg(){
             t = ofMap(t, 0, 1, motion_base_offset.getMin(), motion_base_offset.getMax());
             motion_base_offset.set(t);
         }
-        else if(m.getAddress() == "/robot_motion_base_offset"){
+        // Message from TouchOSC Example template
+        else if(m.getAddress() == "/multixy/1" || m.getAddress() == "/multixy/2" ||
+                m.getAddress() == "/tcp_target_touch_osc" || m.getAddress() == "/look_at_target_touch_osc" ||
+                m.getAddress() == "/motion_lerp_touch_osc" || m.getAddress() == "/base_offset_touch_osc" ||
+                m.getAddress() == "/tcp_target_y_touch_osc" || m.getAddress() == "/look_at_target_y_touch_osc" ||
+                m.getAddress() == "/button_0" || m.getAddress() == "/button_1" || m.getAddress() == "/button_2" || m.getAddress() == "/button_3"){
+            on_touchosc_msg(m);
         }
+        // Message from TouchOSC Example template
+        else if (m.getAddress() == "/_samplerate" || m.getAddress() == "/v1" || m.getAddress() == "/v2" || m.getAddress() == "/v3"){
+            on_touchdesigner_msg(m);
+        }
+        // HTC Vive Puck Example
+        else if (m.getAddress() == "/trackedObjects_Tracker1" || m.getAddress() == "/trackedObjects_Tracker2" || m.getAddress() == "/trackedObjects_Tracker3"){
+            on_unity_msg(m);
+        }
+        else if (m.getAddress() == "/0/tcp_target" || m.getAddress() == "/0/look_at_target"){
+            on_gh_msg(m);
+        }
+        /*
+        // Azure Kinect Example
+        else if (m.getAddress() == "/joint" || m.getAddress() == "/skeleton"){
+            on_kinect_msg(m);
+        }*/
         // unrecognized message
         else{
             string msgString;
@@ -289,8 +228,270 @@ void ofApp::check_for_msg(){
             cout << msgString << endl;
         }
     }
-    
 }
+
+void ofApp::on_touchosc_msg(ofxOscMessage m){
+    
+    if(m.getAddress() == "/multixy/1" || m.getAddress() == "/tcp_target_touch_osc"){
+        float x = m.getArgAsFloat(0);
+        float y = tcp_target.getTranslation().y;
+        float z = m.getArgAsFloat(1);
+        
+        float min_x = aabb_pos.get().x - aabb_bounds.get().x/2;
+        float max_x = aabb_pos.get().x + aabb_bounds.get().x/2;
+        float min_z = aabb_pos.get().z - aabb_bounds.get().z/2;
+        float max_z = aabb_pos.get().z + aabb_bounds.get().z/2;
+        
+        x = ofMap(x, 0, 1, min_x, max_x, true);
+        z = ofMap(z, 0, 1, min_z, max_z, true);
+        
+        ofNode temp;
+        temp.setGlobalPosition(x, y, z);
+        temp.setGlobalOrientation(tcp_target.getRotation());
+        tcp_target.setNode(temp);
+    }
+    else if(m.getAddress() == "/multixy/2" || m.getAddress() == "/look_at_target_touch_osc"){
+        float x = m.getArgAsFloat(0);
+        float y = look_at_target.getTranslation().y;
+        float z = m.getArgAsFloat(1);
+        
+        float offset = 500;
+        
+        float min_x = aabb_pos.get().x - aabb_bounds.get().x/2;
+        float max_x = aabb_pos.get().x + aabb_bounds.get().x/2;
+        float min_z = aabb_pos.get().z - aabb_bounds.get().z/2;
+        float max_z = aabb_pos.get().z + aabb_bounds.get().z/2;
+        
+        x = ofMap(x, 0, 1, min_x+offset, max_x+offset, true);
+        z = ofMap(z, 0, 1, min_z+offset, max_z+offset, true);
+        
+        ofNode temp;
+        temp.setGlobalPosition(x, y, z);
+        temp.setGlobalOrientation(look_at_target.getRotation());
+        look_at_target.setNode(temp);
+    }
+    else if(m.getAddress() == "/tcp_target_y_touch_osc"){
+        float y = m.getArgAsFloat(0);
+        
+        float min = aabb_pos.get().y - aabb_bounds.get().y/2;
+        float max = aabb_pos.get().y + aabb_bounds.get().y/2;
+        
+        auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+        
+        ofNode temp;
+        temp.setGlobalPosition(tcp_target.getTranslation().x, val, tcp_target.getTranslation().z);
+        temp.setGlobalOrientation(tcp_target.getRotation());
+        tcp_target.setNode(temp);
+    }
+    else if(m.getAddress() == "/look_at_target_y_touch_osc"){
+        float y = m.getArgAsFloat(0);
+        
+        float min = aabb_pos.get().y - aabb_bounds.get().y/2;
+        float max = aabb_pos.get().y + aabb_bounds.get().y/2;
+        
+        auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+        
+        ofNode temp;
+        temp.setGlobalPosition(look_at_target.getTranslation().x, val, look_at_target.getTranslation().z);
+        temp.setGlobalOrientation(look_at_target.getRotation());
+        look_at_target.setNode(temp);
+    }
+    else if (m.getAddress() == "/motion_lerp_touch_osc"){
+        float t = m.getArgAsFloat(0);   // value should be in range {0,1}
+        motion_lerp.set(t);
+    }
+    else if (m.getAddress() == "/base_offset_touch_osc"){
+        float t = m.getArgAsFloat(0);   // incoming value is range {0,1}; make {-1,1}
+        t = ofMap(t, 0, 1, motion_base_offset.getMin(), motion_base_offset.getMax());
+        motion_base_offset.set(t);
+    }
+    else if (m.getAddress() == "/button_0"){
+        float t = m.getArgAsFloat(0);
+        if (t == 1.0){
+            float offset = 200;
+            float min = aabb_pos.get().y - aabb_bounds.get().y/2;
+            float max = aabb_pos.get().y + aabb_bounds.get().y/2;
+            
+            auto y = tcp_target.getTranslation().y + offset;
+            auto val = ofClamp(y, min, max);
+            
+            ofNode temp;
+            temp.setGlobalPosition(tcp_target.getTranslation().x, val, tcp_target.getTranslation().z);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+    }
+    else if (m.getAddress() == "/button_1"){
+        float t = m.getArgAsFloat(0);
+        if (t == 1.0){
+            float offset = 200;
+            float min = aabb_pos.get().z - aabb_bounds.get().z/2;
+            float max = aabb_pos.get().z + aabb_bounds.get().z/2;
+            
+            auto z = tcp_target.getTranslation().z - offset;
+            auto val = ofClamp(z, min, max);
+            
+            ofNode temp;
+            temp.setGlobalPosition(tcp_target.getTranslation().x,  tcp_target.getTranslation().y, val);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+    }
+    else if (m.getAddress() == "/button_2"){
+        float t = m.getArgAsFloat(0);
+        if (t == 1.0){
+            float offset = 200;
+            float min = aabb_pos.get().y - aabb_bounds.get().y/2;
+            float max = aabb_pos.get().y + aabb_bounds.get().y/2;
+            
+            auto y = tcp_target.getTranslation().y - offset;
+            auto val = ofClamp(y, min, max);
+            
+            ofNode temp;
+            temp.setGlobalPosition(tcp_target.getTranslation().x, val, tcp_target.getTranslation().z);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+    }
+    else if (m.getAddress() == "/button_3"){
+        float t = m.getArgAsFloat(0);
+        if (t == 1.0){
+            float offset = 200;
+            float min = aabb_pos.get().z - aabb_bounds.get().z/2;
+            float max = aabb_pos.get().z + aabb_bounds.get().z/2;
+            
+            auto z = tcp_target.getTranslation().z + offset;
+            auto val = ofClamp(z, min, max);
+            
+            ofNode temp;
+            temp.setGlobalPosition(tcp_target.getTranslation().x,  tcp_target.getTranslation().y, val);
+            temp.setGlobalOrientation(tcp_target.getRotation());
+            tcp_target.setNode(temp);
+        }
+    }
+}
+
+void ofApp::on_touchdesigner_msg(ofxOscMessage m){
+    if(m.getAddress() == "/_samplerate"){
+        // do nothing
+    }
+    else if(m.getAddress() == "/v1"){
+        float min = aabb_pos.get().x - aabb_bounds.get().x/2;
+        float max = aabb_pos.get().x + aabb_bounds.get().x/2;
+        
+        auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+        
+        ofNode temp;
+        temp.setGlobalPosition(val, tcp_target.getTranslation().y, tcp_target.getTranslation().z);
+        temp.setGlobalOrientation(tcp_target.getRotation());
+        tcp_target.setNode(temp);
+    }
+    else if(m.getAddress() == "/v2"){
+        float min = aabb_pos.get().y - aabb_bounds.get().y/2;
+        float max = aabb_pos.get().y + aabb_bounds.get().y/2;
+        
+        auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+        
+        ofNode temp;
+        temp.setGlobalPosition(tcp_target.getTranslation().x, val, tcp_target.getTranslation().z);
+        temp.setGlobalOrientation(tcp_target.getRotation());
+        tcp_target.setNode(temp);
+    }
+    else if(m.getAddress() == "/v3"){
+        float min = aabb_pos.get().z - aabb_bounds.get().z/2;
+        float max = aabb_pos.get().z + aabb_bounds.get().z/2;
+        
+        auto val = ofMap(m.getArgAsFloat(0), 0, 1, min, max, true);
+        
+        ofNode temp;
+        temp.setGlobalPosition(tcp_target.getTranslation().x, tcp_target.getTranslation().y, val);
+        temp.setGlobalOrientation(tcp_target.getRotation());
+        tcp_target.setNode(temp);
+    }
+}
+
+void ofApp::on_unity_msg(ofxOscMessage m){
+    if (m.getAddress() == "/trackedObjects_Tracker1"){
+        auto m_to_mm = 1000.0;
+        float x = m.getArgAsFloat(0) * m_to_mm;
+        float y = m.getArgAsFloat(1) * m_to_mm;
+        float z = m.getArgAsFloat(2) * m_to_mm;
+        
+        trackers[0].setPosition(x, y, z); // <-- don't use Global Position
+//            cout << "Tracker 0: " << trackers[0].getPosition() << endl;
+    }
+    else if (m.getAddress() == "/trackedObjects_Tracker2"){
+        auto m_to_mm = 1000.0;
+        float x = m.getArgAsFloat(0) * m_to_mm;
+        float y = m.getArgAsFloat(1) * m_to_mm;
+        float z = m.getArgAsFloat(2) * m_to_mm;
+        
+        trackers[1].setPosition(x, y, z); // <-- don't use Global Position
+//            cout << "Tracker 1: " << trackers[1].getPosition() << endl;
+    }
+    else if (m.getAddress() == "/trackedObjects_Tracker3"){
+        auto m_to_mm = 1000.0;
+        float x = m.getArgAsFloat(0) * m_to_mm;
+        float y = m.getArgAsFloat(1) * m_to_mm;
+        float z = m.getArgAsFloat(2) * m_to_mm;
+        
+        trackers[2].setPosition(x, y, z); // <-- don't use Global Position
+//            cout << "Tracker 2: " << trackers[2].getPosition() << endl;
+    }
+}
+
+void ofApp::on_gh_msg(ofxOscMessage m){
+    if(m.getAddress() == "/0/tcp_target"){
+        float x = m.getArgAsFloat(0);
+        float y = m.getArgAsFloat(1);
+        float z = m.getArgAsFloat(2);
+        ofNode temp;
+        temp.setGlobalPosition(x, y, z);
+        temp.setGlobalOrientation(tcp_target.getRotation());
+        tcp_target.setNode(temp);
+    }
+    else if (m.getAddress() == "/0/look_at_target"){
+        float x = m.getArgAsFloat(0);
+        float y = m.getArgAsFloat(1);
+        float z = m.getArgAsFloat(2);
+        ofNode temp;
+        temp.setGlobalPosition(x, y, z);
+        temp.setGlobalOrientation(look_at_target.getRotation());
+        look_at_target.setNode(temp);
+    }
+}
+
+void ofApp::on_kinect_msg(ofxOscMessage m){
+    if (m.getAddress() == "/joint" ){
+        int index = m.getArgAsInt(0);
+        float x = m.getArgAsFloat(1);
+        float y = m.getArgAsFloat(2);
+        float z = m.getArgAsFloat(3);
+        float qw = m.getArgAsFloat(4);
+        float qx = m.getArgAsFloat(5);
+        float qy = m.getArgAsFloat(6);
+        float qz = m.getArgAsFloat(7);
+        joints[index].setPosition(x, y, z); // <-- don't use Global Position
+        joints[index].setGlobalOrientation(glm::quat(qw, qx, qy, qz));
+    }
+    else if (m.getAddress() == "/skeleton"){
+        int body_id = m.getArgAsInt(0);
+        int msg_count = 8;
+        for(int i = 1; i < m.getNumArgs()-msg_count; i+=msg_count){
+            int index = m.getArgAsInt(i);
+            float x = m.getArgAsFloat(i+1);
+            float y = m.getArgAsFloat(i+2);
+            float z = m.getArgAsFloat(i+3);
+            float qw = m.getArgAsFloat(i+4);
+            float qx = m.getArgAsFloat(i+5);
+            float qy = m.getArgAsFloat(i+6);
+            float qz = m.getArgAsFloat(i+7);
+            joints[index].setPosition(x, y, z); // <-- don't use Global Position
+            joints[index].setGlobalOrientation(glm::quat(qw, qx, qy, qz));
+        }
+    }
+}
+
 
 #pragma mark - Safety
 //--------------------------------------------------------------
@@ -438,15 +639,47 @@ void ofApp::setup_skeleton(){
         j.setPosition(i*50, 0, 0);
         i++;
     }
+    
+    // HTC Vive Tracker (still nest under sensor node)
+    trackers.resize(3);
+    i=2;
+    for (auto &j : trackers){
+        j = ofNode();
+        j.setParent(sensor);
+        j.setPosition(i*50, 0, 0);
+        i++;
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw_skeleton(){
     ofPushStyle();
-    for (int i=0; i<joints.size(); i++){
-        joints[i].draw();
+    
+    // Azure Kinect Skeleton
+    if (use_kinect){
+        for (int i=0; i<joints.size(); i++){
+            joints[i].draw();
+        }
+    }
+    
+    // HTC Vive Trackers
+    if (use_vive){
+        for (int i=0; i<trackers.size(); i++){
+           trackers[i].draw();
+        }
     }
     ofPopStyle();
+}
+
+//--------------------------------------------------------------
+glm::vec3 ofApp::get_closest_streamed_position(){
+    auto t1 = &trackers[0];
+    auto t2 = &trackers[1];
+    auto t3 = &trackers[2];
+    
+       // return the streamed position that is closest to the robot's base
+    
+    return t1->getGlobalPosition();
 }
 
 //--------------------------------------------------------------
@@ -574,8 +807,8 @@ void ofApp::setup_gui(){
     panel_safety.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
     
     panel_sensor.setup("Sensor_Parameters");
-    panel_sensor.add(use_sensor.set("Use_Sensor_Input", true));
-    panel_sensor.add(show_sensor_gizmo.set("Show_Sensor_Gizmo", true));
+    panel_sensor.add(use_sensor.set("Use_Sensor_Input", false));
+    panel_sensor.add(show_sensor_gizmo.set("Show_Sensor_Gizmo", false));
     panel_sensor.add(sensor_position.set("Sensor_Position", ofVec3f(), ofVec3f(-2000,-2000,-2000), ofVec3f(2000,2000,2000)));
     panel_sensor.add(sensor_orientation.set("Sensor_Orientation", ofVec4f(0,0,0,1),ofVec4f(-1,-1,-1,-1),ofVec4f(1,1,1,1)));
     panel_sensor.setPosition(panel.getPosition().x, panel_safety.getPosition().y + panel_safety.getHeight() + 5);
@@ -636,8 +869,9 @@ void ofApp::draw_live_robot_warning(){
 
 //--------------------------------------------------------------
 void ofApp::setup_camera(){
-    cam.setFarClip(9999999);
-    cam.setDistance(5000);
+    cam.setFarClip(999999999);
+    cam.setNearClip(0);
+    cam.setDistance(4000);
     ofNode tgt;
     tgt.setGlobalPosition(0, 0, 0);
     tgt.setGlobalOrientation(ofQuaternion(0, 0, 0, 1));
@@ -828,6 +1062,8 @@ void ofApp::keypressed_robot(int key){
         case 'm':
         case 'M':
             robot_live = !robot_live;
+            robot.robotParams.bMove = robot_live;
+            robot.set_live(robot_live);
             // TODO: move sim robot to real robot joint positions
             break;
     }
