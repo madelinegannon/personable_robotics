@@ -17,7 +17,7 @@ This example also introduces techniques to smoothly interpolate between in incom
 
 Here we use an `agent` that moves towards the `target_tcp` position. The `agent` is based off of a simple PD controller, and has tunable that effect its precision, latency, and responsiveness. You can think of it like a three-dimensional spring:
 
-![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/agent_controller_gui.png)
+<img src="https://github.com/madelinegannon/personable_robotics/blob/main/assets/agent_controller_gui.png" width="300">
 
 - `Proportional Gains` controls the _stiffness_
 - `Derivative Gains` controls the _damping_
@@ -37,11 +37,11 @@ The Rhino file contains 2 labeled points, `tcp_target` and `look_at_target`, tha
 
 This example is compatible with the `personal_robotics_osc.tosc` template.
 
-![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_template.png)
+<img src="https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_template.png" width="400">
 
 > Use the `personal_robotics_osc.tosc` in TouchOSC as a starting point for sending data to the robot.
 
-![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_messages.png)
+<img src="https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_messages.png" width="600">
 
 ### Setup
 
@@ -55,7 +55,7 @@ The following screen recording shows how to navigate the TouchOSC interface to s
 
 > This `Host` should be your computer's ip adress, and the `Send Port` should match the `Receiver Port` in your application.
 
-![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_multixy_pad.gif)
+<img src="https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_multixy_pad.gif" width="400">
 
 #### TouchOSC Quick Links
 
