@@ -41,8 +41,6 @@ This example is compatible with the `personal_robotics_osc.tosc` template.
 
 > Use the `personal_robotics_osc.tosc` in TouchOSC as a starting point for sending data to the robot.
 
-<img src="https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_messages.png" width="600">
-
 ### Setup
 
 #### Desktop App
