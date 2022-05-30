@@ -5,6 +5,8 @@ _Barcelona, Spain — May 30 - June 3, 2022_
 # About
 This repository hosts a suite of software tools for learning real-time interaction with robot arms. These tools were prepared for a one-week workshop for Masters in Robotics & Advanced Construction students at [IAAC](https://iaac.net), BCN. The workshop combined lectures, hands-on learning, and direct mentorship to help students find their own unique perspective into the future of human-robot relations.
 
+[Link to google doc](https://docs.google.com/document/d/1GSpXAGWmQsjmNO_Nm-4gc_f88JIXOqqyaA4STPGCRGU/edit?usp=sharing)
+
 ## Tested On
 - Mac 10.14.6
 - Xcode 11.2.1
