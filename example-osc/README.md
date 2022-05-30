@@ -35,13 +35,21 @@ The Rhino file contains 2 labeled points, `tcp_target` and `look_at_target`, tha
 
 ## Using TouchOSC
 
-This example is compatible with TouchOSC's [MultiXY Pad example](http://library.isr.ist.utl.pt/docs/roswiki/touchosc_bridge(2f)Controls.html#Multi_XY_Pad). The first touch controls the `tcp_target` position within a min/max range, and the second touch controls the `look_at_target` position within a min/max range.
+This example is compatible with the `personal_robotics_osc.tosc` template.
 
-> Use the `MultiXY Pad example` in TouchOSC as a starting point for sending data to the robot.
+![](![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_template.png))
+
+> Use the `personal_robotics_osc.tosc` in TouchOSC as a starting point for sending data to the robot.
 
 ![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_messages.png)
 
 ### Setup
+
+#### Desktop App
+
+Download and install the _free_ [TouchOSC Editor](https://hexler.net/touchosc#get) application. Open the `personal_robotics_osc.tosc` template, and click the _link_ icon to set the OSC properties (see below). Press the `play` icon to start streaming out inputs.
+
+#### Mobile App
 
 The following screen recording shows how to navigate the TouchOSC interface to setup an OSC connection on a mobile device. 
 
