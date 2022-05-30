@@ -37,6 +37,8 @@ The Rhino file contains 2 labeled points, `tcp_target` and `look_at_target`, tha
 
 This example is compatible with TouchOSC's [MultiXY Pad example](http://library.isr.ist.utl.pt/docs/roswiki/touchosc_bridge(2f)Controls.html#Multi_XY_Pad). The first touch controls the `tcp_target` position within a min/max range, and the second touch controls the `look_at_target` position within a min/max range.
 
+> Use the `MultiXY Pad example` in TouchOSC as a starting point for sending data to the robot.
+
 ![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/touch_osc_messages.png)
 
 ### Setup
