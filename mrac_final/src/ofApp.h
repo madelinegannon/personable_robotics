@@ -38,6 +38,7 @@ class ofApp : public ofBaseApp{
         void on_touchosc_msg(ofxOscMessage m);
         void on_touchdesigner_msg(ofxOscMessage m);
         void on_unity_msg(ofxOscMessage m);
+        void on_blender_msg(ofxOscMessage m);
         void on_gh_msg(ofxOscMessage m);
         void on_kinect_msg(ofxOscMessage m);
     

@@ -9,7 +9,7 @@ void ofApp::setup(){
     setup_scene();
     
     // setup robot
-    string ip_address = "192.168.1.100"; // change this to your robot's IP address
+    string ip_address = "192.168.125.124"; // change this to your robot's IP address
     bool offline = true; // change this to false when connected to the robot
     robot.setup(ip_address, robot_type, offline);
     
@@ -22,7 +22,7 @@ void ofApp::setup(){
     // start robot
     robot.start();
     
-    show_perspective.set(true);
+    show_side.set(true);
 }
 
 //--------------------------------------------------------------
@@ -147,25 +147,25 @@ void ofApp::check_for_msg(){
         ofxOscMessage m;
         receiver.getNextMessage(m);
         
-        if (m.getAddress() == "/tcp_target_unity" || m.getAddress() == "/lookat_target_unity"){
-            cout << "BOIDS!" << endl;
-        }
-        else if (m.getAddress() == "/tcp_target_leap" || m.getAddress() == "/lookat_target_leap"){
-            cout << "LEAPers!" << endl;
-        }
-        else if (m.getAddress() == "/multixy/1" || m.getAddress() == "/multixy/2" ||
-            m.getAddress() == "/tcp_target_touch_osc" || m.getAddress() == "/look_at_target_touch_osc" ||
-            m.getAddress() == "/motion_lerp_touch_osc" || m.getAddress() == "/base_offset_touch_osc" ||
-            m.getAddress() == "/tcp_target_y_touch_osc" || m.getAddress() == "/look_at_target_y_touch_osc" ||
-            m.getAddress() == "/button_0" || m.getAddress() == "/button_1" || m.getAddress() == "/button_2" || m.getAddress() == "/button_3"){
-            cout << "TOUCH_OSC!" << endl;
-        }
-        else if (m.getAddress() == "/_samplerate" || m.getAddress() == "/v1" || m.getAddress() == "/v2" || m.getAddress() == "/v3"){
-            cout << "TouchDesigner!" << endl;
-        }
-        else if (m.getAddress() == "/0/tcp_target" || m.getAddress() == "/0/look_at_target"){
-            cout << "Grasshopper!" << endl;
-        }
+//        if (m.getAddress() == "/tcp_target_unity" || m.getAddress() == "/lookat_target_unity"){
+//            cout << "BOIDS!" << endl;
+//        }
+//        else if (m.getAddress() == "/tcp_target_leap" || m.getAddress() == "/lookat_target_leap"){
+//            cout << "LEAPers!" << endl;
+//        }
+//        else if (m.getAddress() == "/multixy/1" || m.getAddress() == "/multixy/2" ||
+//            m.getAddress() == "/tcp_target_touch_osc" || m.getAddress() == "/look_at_target_touch_osc" ||
+//            m.getAddress() == "/motion_lerp_touch_osc" || m.getAddress() == "/base_offset_touch_osc" ||
+//            m.getAddress() == "/tcp_target_y_touch_osc" || m.getAddress() == "/look_at_target_y_touch_osc" ||
+//            m.getAddress() == "/button_0" || m.getAddress() == "/button_1" || m.getAddress() == "/button_2" || m.getAddress() == "/button_3"){
+//            cout << "TOUCH_OSC!" << endl;
+//        }
+//        else if (m.getAddress() == "/_samplerate" || m.getAddress() == "/v1" || m.getAddress() == "/v2" || m.getAddress() == "/v3"){
+//            cout << "TouchDesigner!" << endl;
+//        }
+//        else if (m.getAddress() == "/0/tcp_target" || m.getAddress() == "/0/look_at_target"){
+//            cout << "Grasshopper!" << endl;
+//        }
 
         // check move target messages
         if(m.getAddress() == "/tcp_target"){
@@ -194,6 +194,10 @@ void ofApp::check_for_msg(){
             float t = m.getArgAsFloat(0);   // value should be in range {0,1}
             t = ofMap(t, 0, 1, motion_base_offset.getMin(), motion_base_offset.getMax());
             motion_base_offset.set(t);
+        }
+        // Message from Blender
+        else if (m.getAddress() == "/tcp_target_blender" || m.getAddress() == "/look_at_target_blender" ){
+            on_blender_msg(m);
         }
         // Message from TouchOSC Example template
         else if(m.getAddress() == "/multixy/1" || m.getAddress() == "/multixy/2" ||
@@ -282,8 +286,8 @@ void ofApp::on_touchosc_msg(ofxOscMessage m){
         float min_z = aabb_pos.get().z - aabb_bounds.get().z/2;
         float max_z = aabb_pos.get().z + aabb_bounds.get().z/2;
         
-        x = ofMap(x, 0, 1, min_x+offset, max_x+offset, true);
-        z = ofMap(z, 0, 1, min_z+offset, max_z+offset, true);
+        x = ofMap(x, 0, 1, min_x-offset, max_x+offset, true);
+        z = ofMap(z, 0, 1, min_z-offset, max_z+offset, true);
         
         ofNode temp;
         temp.setGlobalPosition(x, y, z);
@@ -427,6 +431,31 @@ void ofApp::on_touchdesigner_msg(ofxOscMessage m){
         temp.setGlobalPosition(tcp_target.getTranslation().x, tcp_target.getTranslation().y, val);
         temp.setGlobalOrientation(tcp_target.getRotation());
         tcp_target.setNode(temp);
+    }
+}
+
+void ofApp::on_blender_msg(ofxOscMessage m){
+    if (m.getAddress() == "/tcp_target_blender"){
+        auto m_to_mm = 1000.0;
+        float x = m.getArgAsFloat(0) * m_to_mm;
+        float y = m.getArgAsFloat(1) * m_to_mm;
+        float z = m.getArgAsFloat(2) * m_to_mm;
+        
+        ofNode temp;
+        temp.setGlobalPosition(x, y, z);
+        temp.setGlobalOrientation(tcp_target.getRotation());
+        tcp_target.setNode(temp);
+    }
+    else if (m.getAddress() == "/look_at_target_blender"){
+        auto m_to_mm = 1000.0;
+        float x = m.getArgAsFloat(0) * m_to_mm;
+        float y = m.getArgAsFloat(1) * m_to_mm;
+        float z = m.getArgAsFloat(2) * m_to_mm;
+        
+        ofNode temp;
+        temp.setGlobalPosition(x, y, z);
+        temp.setGlobalOrientation(look_at_target.getRotation());
+        look_at_target.setNode(temp);
     }
 }
 
@@ -866,8 +895,8 @@ void ofApp::setup_gui(){
     panel_safety.setup("Safety_Bounds");
     panel_safety.add(show_bounds.set("Show_Bounds", true));
     params_safety.setName("Safety_Bounds_Params");
-    params_safety.add(aabb_pos.set("AABB_Pos", ofVec3f(815, 0, 300), ofVec3f(-1000, -1000, -1000), ofVec3f(1000, 1000, 1000)));
-    params_safety.add(aabb_bounds.set("AABB_Bounds", ofVec3f(570, 1200, 1200), ofVec3f(0, 0, 0), ofVec3f(1500, 1500, 1500)));
+    params_safety.add(aabb_pos.set("AABB_Pos", ofVec3f(0, 0, 700), ofVec3f(-2600, -2000, -2000), ofVec3f(2600, 2000, 2000)));
+    params_safety.add(aabb_bounds.set("AABB_Bounds", ofVec3f(2600, 800, 1200), ofVec3f(0, 0, 0), ofVec3f(2600, 2600, 1600)));
     panel_safety.add(params_safety);
     panel_safety.setPosition(panel.getPosition().x, panel.getPosition().y + panel.getHeight() + 5);
     
@@ -991,14 +1020,14 @@ void ofApp::listener_show_front(bool & val)
     if (val) {
         
         int x = 2000;
-        int y = 400;
+        int y = 0;
         int z = 600;
         
         ofVec3f pos = ofVec3f(x, y, z);
         ofVec3f tgt = ofVec3f(0, pos.y, pos.z);
         cam.setGlobalPosition(pos);
         cam.setTarget(tgt);
-        cam.lookAt(tgt, ofVec3f(0, 0, 1));
+        cam.lookAt(tgt, ofVec3f(0, 0, -1));
         
         show_top = false;
         show_front = true;
@@ -1012,15 +1041,15 @@ void ofApp::listener_show_side(bool & val)
 {
     if (val) {
         
-        int x = 900;
-        int y = -2000;
+        int x = 0;
+        int y = 4000;
         int z = 600;
         
         ofVec3f pos = ofVec3f(x, y, z);
         ofVec3f tgt = ofVec3f(pos.x, 0, pos.z);
         cam.setGlobalPosition(pos);
         cam.setTarget(tgt);
-        cam.lookAt(tgt, ofVec3f(0, 0, 1));
+        cam.lookAt(tgt, ofVec3f(0, 0, -1));
         
         show_top = false;
         show_front = false;
@@ -1042,7 +1071,7 @@ void ofApp::listener_show_perspective(bool & val)
         ofVec3f tgt = ofVec3f(0, 800 / 2, 0);
         cam.setGlobalPosition(pos);
         cam.setTarget(tgt);
-        cam.lookAt(tgt, ofVec3f(0, 0, 1));
+        cam.lookAt(tgt, ofVec3f(0, 0, -1));
         cam.setGlobalPosition(pos);
         
         show_top = false;
