@@ -74,8 +74,3 @@ After every restart of the robot, or going into `Local` then `Remote` mode, you 
 
 ![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/example-osc.gif)
 
-## example-lookat
-`example-lookat` adds real-time sensing into the previous example. It uses body tracking from the [Azure Kinect](https://azure.microsoft.com/en-us/services/kinect-dk/) to get the robot to look at and track you as you move around an interaction zone. 
-
-(gif)
-
