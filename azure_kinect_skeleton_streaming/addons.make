@@ -1,3 +1,0 @@
-ofxAzureKinect
-ofxGui
-ofxOsc
