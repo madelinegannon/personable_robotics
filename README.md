@@ -5,7 +5,9 @@ Breathing Life Into Machines
 - ABB robot with Externally Guided Motion [3124-1] option installed.
 - See [`abb_egm_hello_world`](https://github.com/madelinegannon/abb_egm_hello_world) for detailed guidance on how to set up real-time control of ABB robots from an external PC.
 
-![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/ov_egm_working_2.gif)
+![](https://github.com/madelinegannon/personable_robotics/blob/main/assets/egm_ov_working_2.gif)
+
+
 
 # EGM Server API
 
