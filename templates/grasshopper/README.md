@@ -107,20 +107,3 @@ addr = msg_addr + "/height"
 val = data[3]
 client.send_message(addr, val)
 ```
-
-```python
-# Motion: /limits code
-from pythonosc import udp_client
-
-# set up the OSC Sender
-client = udp_client.SimpleUDPClient(host, port)
- 
-# send the message
-addr = msg_addr + "/velocity"  
-val = data[0]
-client.send_message(addr, val)
-
-addr = msg_addr + "/acceleration"  
-val = data[1]
-client.send_message(addr, val)
-```
