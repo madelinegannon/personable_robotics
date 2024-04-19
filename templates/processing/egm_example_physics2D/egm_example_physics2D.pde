@@ -149,7 +149,7 @@ void mousePressed() {
   if (is_inside) {
     OscMessage msg = new OscMessage("/motion/enable");
     msg.add(true);
-    oscP5.send(msg, server_addr);
+    //oscP5.send(msg, server_addr);
   }
   
   springs.get(0).bind(mouseX,mouseY, box);//bounds_x, bounds_y);
@@ -162,7 +162,7 @@ void mouseReleased() {
   if (is_inside) {
     OscMessage msg = new OscMessage("/motion/enable");
     msg.add(false);
-    oscP5.send(msg, server_addr);
+    //oscP5.send(msg, server_addr);
   }
   springs.get(0).destroy();
 }

@@ -119,52 +119,6 @@ void oscEvent(OscMessage theOscMessage) {
   println(" typetag: "+theOscMessage.typetag());
 }
 
-/**
- *  GUI Event handler
- */
-//void controlEvent(ControlEvent theEvent) {
-//  if (theEvent.isController() && millis() > 1500) {          // ignore triggers as the program loads
-//    OscMessage msg = new OscMessage("/test");
-//    if (theEvent.getController().getName() == "stop!") {
-//      msg = new OscMessage("/stop");
-//    } else if (theEvent.getController().getName() == "enable_move") {
-//      msg = new OscMessage("/move_vel");
-//      msg.add(theEvent.getController().getValue());
-//    } else if (theEvent.getController().getName() == "all") {
-//      // normalize the {X,Y} value before sending
-//      float x = theEvent.getController().getArrayValue()[0] / 100.0;
-//      float y = theEvent.getController().getArrayValue()[1] / 100.0;
-//      msg = new OscMessage("/norm");
-//      // use the -1 index to move all koriobots
-//      msg.add(-1);
-//      msg.add(x);
-//      msg.add(y);
-//    } else if (theEvent.getController().getName() == "reset") {
-//      msg = new OscMessage("/reset");
-//    } else if (theEvent.getController().getName() == "position") {
-//      // normalize the {X,Y} value before sending
-//      float x = theEvent.getController().getArrayValue()[0] / 100.0;
-//      float y = theEvent.getController().getArrayValue()[1] / 100.0;
-//      msg = new OscMessage("/bounds/pos");
-//      msg.add(x);
-//      msg.add(y);
-//    } else if (theEvent.getController().getName() == "width") {
-//      msg = new OscMessage("/bounds/width");
-//      msg.add(theEvent.getController().getValue());
-//    } else if (theEvent.getController().getName() == "height") {
-//      msg = new OscMessage("/bounds/height");
-//      msg.add(theEvent.getController().getValue());
-//    } else if (theEvent.getController().getName() == "vel") {
-//      msg = new OscMessage("/limits/velocity");
-//      msg.add(theEvent.getController().getValue());
-//    } else if (theEvent.getController().getName() == "accel") {
-//      msg = new OscMessage("/limits/acceleration");
-//      msg.add(theEvent.getController().getValue());
-//    }
-//    oscP5.send(msg, server_addr);
-//  }
-//}
-
 void controlEvent(ControlEvent theEvent) {
   if (theEvent.isController() && millis() > 1500) {          // ignore triggers as the program loads
     OscMessage msg = new OscMessage("/test");
@@ -246,8 +200,6 @@ void controlEvent(ControlEvent theEvent) {
     oscP5.send(msg, server_addr);
   }
 }
-
-
 
 
 void setup_gui() {
