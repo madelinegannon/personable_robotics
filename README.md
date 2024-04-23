@@ -73,6 +73,28 @@ We can use Processing and the third-party library [oscP5](https://sojamo.de/libr
 
 6. Press play and run.
 
+## Python
+
+[Python](https://www.python.org/) is a powerful and flexible programming language. We can use Python and the third-party library [python-osc](https://pypi.org/project/python-osc/) to talk to the EGM Server:
+
+### Setup
+
+1. Download and install [Python](https://www.python.org/downloads/).
+2. Install the `python-osc` library using pip:
+
+```bash
+pip install python-osc
+```
+3. Run the `controller_template.py` script from command line with the following arguments:
+```bash
+python controller_template <ip_address> <port>
+```
+Example:
+```bash
+python controller_template "192.168.1.138" 55556
+```
+
+
 ### Examples
 
 #### egm_example_mouse2D
