@@ -94,6 +94,9 @@ Example:
 python controller_template "192.168.1.138" 55556
 ```
 
+## Grasshopper
+
+See [example](https://github.com/madelinegannon/koriobots/tree/main/software/examples/grasshopper) of 2D normalization.
 
 ### Examples
 
